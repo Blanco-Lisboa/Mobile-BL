@@ -11,12 +11,15 @@ const _statusOpcoes = [['online', 'Online'], ['reuniao', 'Reunião'], ['ausente'
 Widget avatar(Map<String, dynamic>? p, double tam) {
   final foto = p?['foto_url'] as String?;
   final ini = ((p?['nome'] as String?) ?? 'BL').trim().split(RegExp(r'\s+')).take(2).map((e) => e[0]).join().toUpperCase();
+  ImageProvider? img;
+  if (foto != null && foto.startsWith('data:')) img = MemoryImage(UriData.parse(foto).contentAsBytes());
+  if (foto != null && foto.startsWith('http')) img = NetworkImage(foto);
+  final letras = Text(ini, style: TextStyle(color: Cores.dourado, fontSize: tam * .32, fontWeight: FontWeight.w500));
   return Container(
-    width: tam, height: tam,
-    decoration: BoxDecoration(color: Cores.marinho, shape: BoxShape.circle,
-        image: foto != null && foto.startsWith('data:') ? DecorationImage(image: MemoryImage(UriData.parse(foto).contentAsBytes()), fit: BoxFit.cover) : null),
+    width: tam, height: tam, clipBehavior: Clip.antiAlias,
+    decoration: const BoxDecoration(color: Cores.marinho, shape: BoxShape.circle),
     alignment: Alignment.center,
-    child: foto == null ? Text(ini, style: TextStyle(color: Cores.dourado, fontSize: tam * .32, fontWeight: FontWeight.w500)) : null,
+    child: img == null ? letras : Image(image: img, width: tam, height: tam, fit: BoxFit.cover, errorBuilder: (_, _, _) => letras),
   );
 }
 
