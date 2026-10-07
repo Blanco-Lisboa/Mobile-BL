@@ -143,7 +143,7 @@ class TeamsApiSupabase implements TeamsApi {
   Future<List<Mensagem>> mensagens(String canal) async {
     final r = await tm
         .from('chat_mensagem')
-        .select('id,canal_id,autor_id,tipo,corpo,meta,responde_a,criada_em,editada_em,excluida_em,chat_anexo(id,tipo,nome,url,tamanho,transcricao)')
+        .select('id,canal_id,autor_id,tipo,corpo,meta,responde_a,criada_em,editada_em,excluida_em,chat_anexo(id,tipo,nome,url,tamanho,transcricao),chat_recibo(usuario_id,lido_em)')
         .eq('canal_id', canal)
         .isFilter('excluida_em', null)
         .order('criada_em', ascending: false)

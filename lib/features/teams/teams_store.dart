@@ -172,6 +172,12 @@ class TeamsStore extends ChangeNotifier {
     await api.enviar(canal, corpo: comentario.isEmpty ? 'Cliente citado' : comentario, meta: {'cliente_id': e.id}, mencoes: mencoesDe(comentario));
   }
 
+  Future<void> mudarStatus(String st) async {
+    await api.definirPresenca(st);
+    presencas[eu] = st;
+    notifyListeners();
+  }
+
   Future<void> silenciar(Canal c) async {
     await api.marcarLido(c.id);
     await api.silenciar(c.id, !c.silenciado);

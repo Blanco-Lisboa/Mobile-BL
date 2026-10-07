@@ -84,4 +84,17 @@ void main() {
     await c.recusar();
     await t.pumpAndSettle();
   });
+
+  testWidgets('topo troca status para Não me interrompam e Grupos mostra departamentos', (t) async {
+    final (api, s, _) = await _montar(t);
+    await t.tap(find.byKey(const Key('meu-status')));
+    await t.pumpAndSettle();
+    await t.tap(find.text('Não me interrompam').last);
+    await t.pumpAndSettle();
+    expect(api.presencaDefinida.last, 'nao_interromper');
+    expect(s.presencas['eu'], 'nao_interromper');
+    await t.tap(find.byKey(const Key('sub-grupos')));
+    await t.pumpAndSettle();
+    expect(find.text('Societário'), findsWidgets);
+  });
 }

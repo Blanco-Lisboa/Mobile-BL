@@ -35,10 +35,15 @@ class ChamadaController extends ChangeNotifier {
 
   Duration get duracao => inicio == null ? Duration.zero : DateTime.now().difference(inicio!);
 
-  List<lk.VideoTrack> get videosRemotos => [
+  List<(String, lk.VideoTrack?)> get quadros => [
         for (final p in sala?.remoteParticipants.values ?? const <lk.RemoteParticipant>[])
-          for (final pub in p.videoTrackPublications)
-            if (pub.track != null && !pub.muted) pub.track as lk.VideoTrack,
+          (
+            p.identity,
+            p.videoTrackPublications
+                .where((pub) => pub.track != null && !pub.muted)
+                .map((pub) => pub.track as lk.VideoTrack)
+                .firstOrNull,
+          ),
       ];
 
   lk.VideoTrack? get videoLocal {
@@ -337,7 +342,7 @@ class _TelaChamada extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final remotos = c.videosRemotos;
+    final remotos = c.quadros;
     final local = c.videoLocal;
     final pessoa = c.dono ? null : c.store.equipe.pessoa(c.de);
     final d = c.duracao;
@@ -357,9 +362,14 @@ class _TelaChamada extends StatelessWidget {
           child: Stack(children: [
             if (remotos.isNotEmpty)
               Positioned.fill(
+                bottom: 120,
                 child: remotos.length == 1
-                    ? lk.VideoTrackRenderer(remotos.first, fit: lk.VideoViewFit.cover)
-                    : GridView.count(crossAxisCount: 2, children: [for (final v in remotos) lk.VideoTrackRenderer(v, fit: lk.VideoViewFit.cover)]),
+                    ? _quadro(remotos.first)
+                    : GridView.count(
+                        padding: const EdgeInsets.fromLTRB(10, 40, 10, 0),
+                        crossAxisCount: 2, mainAxisSpacing: 8, crossAxisSpacing: 8, childAspectRatio: .75,
+                        children: [for (final q in remotos) ClipRRect(borderRadius: BorderRadius.circular(16), child: _quadro(q))],
+                      ),
               ),
             if (remotos.isEmpty)
               Align(
@@ -394,6 +404,20 @@ class _TelaChamada extends StatelessWidget {
           ]),
         ),
       ),
+    );
+  }
+
+  Widget _quadro((String, lk.VideoTrack?) q) {
+    if (q.$2 != null) return lk.VideoTrackRenderer(q.$2!, fit: lk.VideoViewFit.cover);
+    final p = c.store.equipe.pessoa(q.$1);
+    return Container(
+      color: const Color(0xFF0E2238),
+      alignment: Alignment.center,
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        bolinhaPessoa(p, tamanho: 72),
+        const SizedBox(height: 10),
+        Text(p.nome, style: const TextStyle(color: Colors.white, fontSize: 13)),
+      ]),
     );
   }
 

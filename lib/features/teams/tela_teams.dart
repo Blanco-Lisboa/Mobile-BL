@@ -96,35 +96,89 @@ class _AbaConversasState extends State<AbaConversas> {
     widget.store.fecharCanal();
   }
 
+  Future<void> _escolherStatus() async {
+    final s = widget.store;
+    final st = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => folhaFlutuante(
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          for (final o in opcoesStatus)
+            ListTile(
+              leading: Container(width: 10, height: 10, decoration: BoxDecoration(color: corStatus(o.$1), shape: BoxShape.circle)),
+              title: Text(o.$2, style: const TextStyle(fontSize: 13.5)),
+              trailing: s.presencas[s.eu] == o.$1 ? const Icon(Icons.check_rounded, size: 18, color: Cores.douradoTexto) : null,
+              onTap: () => Navigator.pop(ctx, o.$1),
+            ),
+        ]),
+      ),
+    );
+    if (st == null) return;
+    try {
+      await s.mudarStatus(st);
+    } catch (_) {
+      if (mounted) avisar(context, 'Status não salvou.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = widget.store;
     final hoje = DateTime.now();
     final inicioHoje = DateTime(hoje.year, hoje.month, hoje.day);
+    final eu = s.equipe.pessoa(s.eu);
+    final meuStatus = s.presencas[s.eu] ?? 'online';
     var lista = [...s.canais];
     lista.sort((a, b) => (b.ultima?.em ?? DateTime(2000)).compareTo(a.ultima?.em ?? DateTime(2000)));
     final b = busca.toLowerCase();
     final pessoasBusca = b.isEmpty ? <Pessoa>[] : s.equipe.pessoas.where((p) => p.id != s.eu && p.nome.toLowerCase().contains(b)).toList();
+    bool deHoje(Canal c) => c.naoLidas > 0 || (c.ultima?.em?.isAfter(inicioHoje) ?? false);
+    var setoresSemCanal = <Setor>[];
     if (b.isNotEmpty) {
       lista = lista.where((c) => s.nomeCanal(c).toLowerCase().contains(b) || (c.ultima?.corpo ?? '').toLowerCase().contains(b)).toList();
     } else if (filtro == 'entrada') {
-      lista = lista.where((c) => c.tipo != 'setor' && (c.naoLidas > 0 || (c.ultima?.em?.isAfter(inicioHoje) ?? false))).toList();
+      lista = lista.where(deHoje).toList();
     } else if (filtro == 'anteriores') {
-      lista = lista.where((c) => c.tipo == 'direta' && c.ultima != null).toList();
-    } else if (filtro == 'grupos') {
-      lista = lista.where((c) => c.tipo == 'grupo').toList();
+      lista = lista.where((c) => !deHoje(c) && c.ultima != null && c.tipo != 'setor').toList();
+    } else {
+      final setores = lista.where((c) => c.tipo == 'setor').toList();
+      lista = [...setores, ...lista.where((c) => c.tipo == 'grupo')];
+      setoresSemCanal = s.equipe.setores.where((st) => !s.canais.any((c) => c.tipo == 'setor' && c.setorId == st.id)).toList();
     }
-    final setoresSemCanal = filtro == 'setores' && b.isEmpty
-        ? s.equipe.setores.where((st) => !s.canais.any((c) => c.tipo == 'setor' && c.setorId == st.id)).toList()
-        : <Setor>[];
-    if (filtro == 'setores' && b.isEmpty) lista = lista.where((c) => c.tipo == 'setor').toList();
     final pessoasDiretas = pessoasBusca.where((p) => !lista.any((c) => c.tipo == 'direta' && c.membros.contains(p.id))).toList();
 
     return Stack(children: [
       Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Topo(titulo: 'TEAM\'s', voltar: true, acoes: [
-          Bolinha(texto: iniciais(s.equipe.pessoa(s.eu).nome), tamanho: 30, escuro: true, status: s.presencas[s.eu], fotoUrl: s.equipe.pessoa(s.eu).fotoUrl),
-        ]),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 6, 14, 10),
+          child: Row(children: [
+            IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.chevron_left_rounded, color: Cores.douradoTexto, size: 28)),
+            Expanded(
+              child: GestureDetector(
+                key: const Key('meu-status'),
+                onTap: _escolherStatus,
+                child: Row(children: [
+                  Bolinha(texto: iniciais(eu.nome), tamanho: 34, escuro: true, status: meuStatus, fotoUrl: eu.fotoUrl),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(eu.nome, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                      Row(children: [
+                        Text(statusPresenca[meuStatus] ?? 'Online', style: TextStyle(fontSize: 10.5, color: corStatus(meuStatus), fontWeight: FontWeight.w500)),
+                        if (eu.setores.isNotEmpty)
+                          Flexible(
+                            child: Text(' · ${eu.setores.map(s.equipe.nomeSetor).join(', ')}', maxLines: 1, overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 10.5, color: Cores.cinza)),
+                          ),
+                        const Icon(Icons.expand_more_rounded, size: 14, color: Cores.cinza),
+                      ]),
+                    ]),
+                  ),
+                ]),
+              ),
+            ),
+          ]),
+        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
           child: TextField(
@@ -145,9 +199,10 @@ class _AbaConversasState extends State<AbaConversas> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Row(children: [
-              for (final f in const [('entrada', 'Entrada'), ('anteriores', 'Anteriores'), ('grupos', 'Grupos'), ('setores', 'Setores')]) ...[
+              for (final f in const [('entrada', 'Caixa de entrada'), ('anteriores', 'Anteriores'), ('grupos', 'Grupos')]) ...[
                 Expanded(
                   child: GestureDetector(
+                    key: Key('sub-${f.$1}'),
                     onTap: () => setState(() => filtro = f.$1),
                     child: Container(
                       height: 30, alignment: Alignment.center,
@@ -160,7 +215,7 @@ class _AbaConversasState extends State<AbaConversas> {
                     ),
                   ),
                 ),
-                if (f.$1 != 'setores') const SizedBox(width: 5),
+                if (f.$1 != 'grupos') const SizedBox(width: 5),
               ],
             ]),
           ),
@@ -169,7 +224,7 @@ class _AbaConversasState extends State<AbaConversas> {
             for (final c in lista) _itemCanal(c),
             for (final st in setoresSemCanal)
               _linha(
-                Bolinha(texto: '#', escuro: true, quadrado: true),
+                const Bolinha(texto: '#', escuro: true, quadrado: true),
                 st.nome, '${s.equipe.doSetor(st.id).length} pessoas', '', 0, false,
                 () async => _abrir(await s.abrirSetor(st)),
               ),

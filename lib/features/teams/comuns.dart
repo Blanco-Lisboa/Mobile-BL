@@ -220,3 +220,13 @@ Widget cabecalhoFormulario(BuildContext context, {required String titulo, requir
     ]),
   );
 }
+
+Widget folhaFlutuante(Widget filho) => Padding(
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 24),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        clipBehavior: Clip.antiAlias,
+        child: filho,
+      ),
+    );

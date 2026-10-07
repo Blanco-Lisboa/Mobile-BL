@@ -119,6 +119,7 @@ class Mensagem {
     this.editadaEm,
     this.anexos = const [],
     this.provisoria = false,
+    this.lidoPor = const {},
   });
   final String id;
   final String canalId;
@@ -131,6 +132,7 @@ class Mensagem {
   DateTime? editadaEm;
   List<Anexo> anexos;
   final bool provisoria;
+  final Set<String> lidoPor;
 
   factory Mensagem.deMapa(Map m) => Mensagem(
         id: m['id'] as String,
@@ -143,6 +145,10 @@ class Mensagem {
         criadaEm: DateTime.parse(m['criada_em'] as String).toLocal(),
         editadaEm: DateTime.tryParse((m['editada_em'] ?? '').toString())?.toLocal(),
         anexos: ((m['chat_anexo'] as List?) ?? const []).map((a) => Anexo.deMapa(a as Map)).toList(),
+        lidoPor: {
+          for (final r in ((m['chat_recibo'] as List?) ?? const []))
+            if ((r as Map)['lido_em'] != null) r['usuario_id'] as String,
+        },
       );
 }
 
@@ -236,6 +242,8 @@ class Empresa {
         regime: m['regime_tributario'] as String?,
       );
 }
+
+const opcoesStatus = [('online', 'Online'), ('reuniao', 'Em reunião'), ('ausente', 'Ausente'), ('nao_interromper', 'Não me interrompam')];
 
 const statusPresenca = {
   'online': 'Online',

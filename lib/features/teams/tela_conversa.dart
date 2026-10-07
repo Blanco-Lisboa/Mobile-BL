@@ -225,10 +225,8 @@ class _TelaConversaState extends State<TelaConversa> {
                 f();
               },
             );
-        return Container(
-          margin: const EdgeInsets.fromLTRB(8, 0, 8, 24),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18)),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
+        return folhaFlutuante(
+          Column(mainAxisSize: MainAxisSize.min, children: [
             op('Responder', Icons.reply_rounded, () {
               setState(() => _resposta = m);
               _foco.requestFocus();
@@ -435,7 +433,8 @@ class _TelaConversaState extends State<TelaConversa> {
       Text(hora(m.criadaEm), style: TextStyle(fontSize: 9, color: corTexto.withValues(alpha: .6))),
       if (minha) ...[
         const SizedBox(width: 3),
-        Icon(m.provisoria ? Icons.schedule_rounded : Icons.done_rounded, size: 11, color: m.provisoria ? const Color(0xFF9AA5B2) : Cores.dourado),
+        Icon(m.provisoria ? Icons.schedule_rounded : (m.lidoPor.any((u) => u != s.eu) ? Icons.done_all_rounded : Icons.done_rounded),
+            size: 12, color: m.provisoria ? const Color(0xFF9AA5B2) : (m.lidoPor.any((u) => u != s.eu) ? Cores.dourado : const Color(0xFF9AA5B2))),
       ],
     ]));
     return Align(
