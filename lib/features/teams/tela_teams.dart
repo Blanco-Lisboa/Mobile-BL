@@ -1,0 +1,248 @@
+import 'package:flutter/material.dart';
+import '../../core/tema.dart';
+import '../../data/teams/modelos.dart';
+import 'aba_avisos.dart';
+import 'aba_pedidos.dart';
+import 'aba_reunioes.dart';
+import 'chamada.dart';
+import 'comuns.dart';
+import 'tela_conversa.dart';
+import 'tela_nova_conversa.dart';
+import 'teams_store.dart';
+
+class TelaTeams extends StatefulWidget {
+  const TelaTeams({super.key, required this.store, required this.chamada});
+  final TeamsStore store;
+  final ChamadaController chamada;
+  @override
+  State<TelaTeams> createState() => _TelaTeamsState();
+}
+
+class _TelaTeamsState extends State<TelaTeams> {
+  int aba = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = widget.store;
+    return ListenableBuilder(
+      listenable: s,
+      builder: (context, _) => Scaffold(
+        body: SafeArea(
+          bottom: false,
+          child: IndexedStack(index: aba, children: [
+            AbaConversas(store: s, chamada: widget.chamada),
+            AbaAvisos(store: s),
+            AbaPedidos(store: s),
+            AbaReunioes(store: s, chamada: widget.chamada),
+          ]),
+        ),
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Cores.linha))),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              height: 58,
+              child: Row(children: [
+                _aba(0, Icons.chat_bubble_outline_rounded, 'Conversas', s.naoLidasTotal),
+                _aba(1, Icons.notifications_none_rounded, 'Avisos', s.pend['avisos'] ?? 0),
+                _aba(2, Icons.assignment_outlined, 'Pedidos', s.pend['pedidos'] ?? 0),
+                _aba(3, Icons.event_outlined, 'Reuniões', s.pend['reunioes'] ?? 0),
+              ]),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _aba(int i, IconData ic, String nome, int n) {
+    final sel = aba == i;
+    return Expanded(
+      child: InkWell(
+        key: Key('aba-$i'),
+        onTap: () {
+          setState(() => aba = i);
+          if (i == 1) widget.store.carregarAvisos();
+          if (i == 2) widget.store.carregarPedidos();
+          if (i == 3) widget.store.carregarReunioes();
+        },
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Stack(clipBehavior: Clip.none, children: [
+            Icon(ic, size: 21, color: sel ? Cores.texto : const Color(0xFF8B97A6)),
+            Positioned(right: -10, top: -5, child: Selo(n, pequeno: true)),
+          ]),
+          const SizedBox(height: 3),
+          Text(nome, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: sel ? Cores.texto : const Color(0xFF8B97A6))),
+        ]),
+      ),
+    );
+  }
+}
+
+class AbaConversas extends StatefulWidget {
+  const AbaConversas({super.key, required this.store, required this.chamada});
+  final TeamsStore store;
+  final ChamadaController chamada;
+  @override
+  State<AbaConversas> createState() => _AbaConversasState();
+}
+
+class _AbaConversasState extends State<AbaConversas> {
+  String filtro = 'entrada';
+  String busca = '';
+
+  Future<void> _abrir(String id) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (_) => TelaConversa(store: widget.store, canalId: id, chamada: widget.chamada)));
+    widget.store.fecharCanal();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = widget.store;
+    final hoje = DateTime.now();
+    final inicioHoje = DateTime(hoje.year, hoje.month, hoje.day);
+    var lista = [...s.canais];
+    lista.sort((a, b) => (b.ultima?.em ?? DateTime(2000)).compareTo(a.ultima?.em ?? DateTime(2000)));
+    final b = busca.toLowerCase();
+    final pessoasBusca = b.isEmpty ? <Pessoa>[] : s.equipe.pessoas.where((p) => p.id != s.eu && p.nome.toLowerCase().contains(b)).toList();
+    if (b.isNotEmpty) {
+      lista = lista.where((c) => s.nomeCanal(c).toLowerCase().contains(b) || (c.ultima?.corpo ?? '').toLowerCase().contains(b)).toList();
+    } else if (filtro == 'entrada') {
+      lista = lista.where((c) => c.tipo != 'setor' && (c.naoLidas > 0 || (c.ultima?.em?.isAfter(inicioHoje) ?? false))).toList();
+    } else if (filtro == 'anteriores') {
+      lista = lista.where((c) => c.tipo == 'direta' && c.ultima != null).toList();
+    } else if (filtro == 'grupos') {
+      lista = lista.where((c) => c.tipo == 'grupo').toList();
+    }
+    final setoresSemCanal = filtro == 'setores' && b.isEmpty
+        ? s.equipe.setores.where((st) => !s.canais.any((c) => c.tipo == 'setor' && c.setorId == st.id)).toList()
+        : <Setor>[];
+    if (filtro == 'setores' && b.isEmpty) lista = lista.where((c) => c.tipo == 'setor').toList();
+    final pessoasDiretas = pessoasBusca.where((p) => !lista.any((c) => c.tipo == 'direta' && c.membros.contains(p.id))).toList();
+
+    return Stack(children: [
+      Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Topo(titulo: 'TEAM\'s', voltar: true, acoes: [
+          Bolinha(texto: iniciais(s.equipe.pessoa(s.eu).nome), tamanho: 30, escuro: true, status: s.presencas[s.eu], fotoUrl: s.equipe.pessoa(s.eu).fotoUrl),
+        ]),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+          child: TextField(
+            key: const Key('busca'),
+            onChanged: (v) => setState(() => busca = v.trim()),
+            style: const TextStyle(fontSize: 13),
+            decoration: InputDecoration(
+              hintText: 'Buscar conversa ou pessoa',
+              hintStyle: const TextStyle(fontSize: 12.5, color: Color(0xFF8B97A6)),
+              prefixIcon: const Icon(Icons.search_rounded, size: 18, color: Color(0xFF8B97A6)),
+              filled: true, fillColor: const Color(0xFFEEF1F4), isDense: true,
+              contentPadding: const EdgeInsets.symmetric(vertical: 9),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+            ),
+          ),
+        ),
+        if (b.isEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Row(children: [
+              for (final f in const [('entrada', 'Entrada'), ('anteriores', 'Anteriores'), ('grupos', 'Grupos'), ('setores', 'Setores')]) ...[
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => filtro = f.$1),
+                    child: Container(
+                      height: 30, alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: filtro == f.$1 ? Cores.marinho : Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: filtro == f.$1 ? Cores.marinho : Cores.linha),
+                      ),
+                      child: Text(f.$2, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: filtro == f.$1 ? Colors.white : const Color(0xFF5C6878))),
+                    ),
+                  ),
+                ),
+                if (f.$1 != 'setores') const SizedBox(width: 5),
+              ],
+            ]),
+          ),
+        Expanded(
+          child: ListView(padding: const EdgeInsets.fromLTRB(8, 0, 8, 90), children: [
+            for (final c in lista) _itemCanal(c),
+            for (final st in setoresSemCanal)
+              _linha(
+                Bolinha(texto: '#', escuro: true, quadrado: true),
+                st.nome, '${s.equipe.doSetor(st.id).length} pessoas', '', 0, false,
+                () async => _abrir(await s.abrirSetor(st)),
+              ),
+            for (final p in pessoasDiretas)
+              _linha(bolinhaPessoa(p, status: s.presencas[p.id] ?? 'offline'), p.nome, 'Nova conversa', '', 0, false,
+                  () async => _abrir(await s.abrirDireta(p.id))),
+          ]),
+        ),
+      ]),
+      Positioned(
+        right: 16, bottom: 16,
+        child: GestureDetector(
+          key: const Key('nova-conversa'),
+          onTap: () async {
+            final id = await Navigator.push<String>(context, MaterialPageRoute(builder: (_) => TelaNovaConversa(store: s)));
+            if (id != null) _abrir(id);
+          },
+          child: Container(
+            width: 48, height: 48,
+            decoration: BoxDecoration(color: Cores.marinho, borderRadius: BorderRadius.circular(16),
+                boxShadow: const [BoxShadow(color: Color(0x800A1B30), blurRadius: 24, offset: Offset(0, 10), spreadRadius: -8)]),
+            child: const Icon(Icons.add_rounded, color: Cores.dourado),
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  Widget _itemCanal(Canal c) {
+    final s = widget.store;
+    Widget av;
+    if (c.tipo == 'direta') {
+      final p = s.equipe.pessoa(s.outroDaDireta(c));
+      av = bolinhaPessoa(p, status: s.presencas[p.id] ?? 'offline');
+    } else if (c.tipo == 'setor') {
+      av = const Bolinha(texto: '#', escuro: true, quadrado: true);
+    } else {
+      av = Bolinha(texto: iniciais(s.nomeCanal(c)), quadrado: true);
+    }
+    final u = c.ultima;
+    var previa = '';
+    if (u != null) {
+      final autor = u.autorId == s.eu ? 'Você' : (c.tipo == 'direta' ? '' : s.equipe.pessoa(u.autorId).nome.split(' ').first);
+      final corpo = switch (u.tipo) { 'audio' => '🎤 Áudio', 'arquivo' => '📎 ${u.corpo ?? 'Arquivo'}', 'pedido' => '📋 ${u.corpo ?? ''}', _ => u.corpo ?? '' };
+      previa = autor.isEmpty ? corpo : '$autor: $corpo';
+    }
+    return _linha(av, s.nomeCanal(c), previa, quando(u?.em), c.naoLidas, c.silenciado, () => _abrir(c.id));
+  }
+
+  Widget _linha(Widget av, String nome, String previa, String h, int n, bool mudo, VoidCallback aoTocar) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: aoTocar,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
+        child: Row(children: [
+          av,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(nome, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 2),
+              Text(previa, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11.5, color: Cores.cinza)),
+            ]),
+          ),
+          const SizedBox(width: 8),
+          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Text(h, style: const TextStyle(fontSize: 10, color: Color(0xFF9AA5B2))),
+            const SizedBox(height: 4),
+            if (mudo) const Icon(Icons.notifications_off_outlined, size: 13, color: Cores.cinzaStatus) else Selo(n),
+          ]),
+        ]),
+      ),
+    );
+  }
+}
