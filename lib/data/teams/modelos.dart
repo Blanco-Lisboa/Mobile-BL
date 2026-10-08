@@ -1,5 +1,12 @@
 class Pessoa {
-  const Pessoa({required this.id, required this.nome, this.email, this.nivel, this.fotoUrl, this.setores = const []});
+  const Pessoa({
+    required this.id,
+    required this.nome,
+    this.email,
+    this.nivel,
+    this.fotoUrl,
+    this.setores = const [],
+  });
   final String id;
   final String nome;
   final String? email;
@@ -8,13 +15,15 @@ class Pessoa {
   final List<String> setores;
 
   factory Pessoa.deMapa(Map m) => Pessoa(
-        id: m['id'] as String,
-        nome: (m['nome'] as String?) ?? '—',
-        email: m['email'] as String?,
-        nivel: m['nivel'] as String?,
-        fotoUrl: m['foto_url'] as String?,
-        setores: ((m['setores'] as List?) ?? const []).map((e) => e.toString()).toList(),
-      );
+    id: m['id'] as String,
+    nome: (m['nome'] as String?) ?? '—',
+    email: m['email'] as String?,
+    nivel: m['nivel'] as String?,
+    fotoUrl: m['foto_url'] as String?,
+    setores: ((m['setores'] as List?) ?? const [])
+        .map((e) => e.toString())
+        .toList(),
+  );
 }
 
 class Setor {
@@ -28,10 +37,18 @@ class Equipe {
   final List<Pessoa> pessoas;
   final List<Setor> setores;
 
-  Pessoa pessoa(String? id) =>
-      pessoas.firstWhere((p) => p.id == id, orElse: () => Pessoa(id: id ?? '', nome: 'Alguém'));
-  String nomeSetor(String? id) => setores.firstWhere((s) => s.id == id, orElse: () => const Setor(id: '', nome: 'Setor')).nome;
-  List<Pessoa> doSetor(String? id) => pessoas.where((p) => p.setores.contains(id)).toList();
+  Pessoa pessoa(String? id) => pessoas.firstWhere(
+    (p) => p.id == id,
+    orElse: () => Pessoa(id: id ?? '', nome: 'Alguém'),
+  );
+  String nomeSetor(String? id) => setores
+      .firstWhere(
+        (s) => s.id == id,
+        orElse: () => const Setor(id: '', nome: 'Setor'),
+      )
+      .nome;
+  List<Pessoa> doSetor(String? id) =>
+      pessoas.where((p) => p.setores.contains(id)).toList();
 }
 
 class Ultima {
@@ -72,7 +89,9 @@ class Canal {
       nome: m['nome'] as String?,
       descricao: m['descricao'] as String?,
       setorId: m['setor_id'] as String?,
-      membros: ((m['membros'] as List?) ?? const []).map((e) => e.toString()).toList(),
+      membros: ((m['membros'] as List?) ?? const [])
+          .map((e) => e.toString())
+          .toList(),
       silenciado: m['silenciado'] == true,
       naoLidas: (m['nao_lidas'] as num?)?.toInt() ?? 0,
       ultima: u == null
@@ -88,7 +107,14 @@ class Canal {
 }
 
 class Anexo {
-  const Anexo({required this.id, required this.tipo, this.nome, this.url, this.tamanho, this.transcricao});
+  const Anexo({
+    required this.id,
+    required this.tipo,
+    this.nome,
+    this.url,
+    this.tamanho,
+    this.transcricao,
+  });
   final String id;
   final String tipo;
   final String? nome;
@@ -97,13 +123,13 @@ class Anexo {
   final String? transcricao;
 
   factory Anexo.deMapa(Map m) => Anexo(
-        id: m['id'] as String,
-        tipo: (m['tipo'] as String?) ?? 'arquivo',
-        nome: m['nome'] as String?,
-        url: m['url'] as String?,
-        tamanho: (m['tamanho'] as num?)?.toInt(),
-        transcricao: m['transcricao'] as String?,
-      );
+    id: m['id'] as String,
+    tipo: (m['tipo'] as String?) ?? 'arquivo',
+    nome: m['nome'] as String?,
+    url: m['url'] as String?,
+    tamanho: (m['tamanho'] as num?)?.toInt(),
+    transcricao: m['transcricao'] as String?,
+  );
 }
 
 class Mensagem {
@@ -135,25 +161,36 @@ class Mensagem {
   final Set<String> lidoPor;
 
   factory Mensagem.deMapa(Map m) => Mensagem(
-        id: m['id'] as String,
-        canalId: m['canal_id'] as String,
-        autorId: m['autor_id'] as String?,
-        tipo: (m['tipo'] as String?) ?? 'texto',
-        corpo: m['corpo'] as String?,
-        meta: Map<String, dynamic>.from((m['meta'] as Map?) ?? const {}),
-        respondeA: m['responde_a'] as String?,
-        criadaEm: DateTime.parse(m['criada_em'] as String).toLocal(),
-        editadaEm: DateTime.tryParse((m['editada_em'] ?? '').toString())?.toLocal(),
-        anexos: ((m['chat_anexo'] as List?) ?? const []).map((a) => Anexo.deMapa(a as Map)).toList(),
-        lidoPor: {
-          for (final r in ((m['chat_recibo'] as List?) ?? const []))
-            if ((r as Map)['lido_em'] != null) r['usuario_id'] as String,
-        },
-      );
+    id: m['id'] as String,
+    canalId: m['canal_id'] as String,
+    autorId: m['autor_id'] as String?,
+    tipo: (m['tipo'] as String?) ?? 'texto',
+    corpo: m['corpo'] as String?,
+    meta: Map<String, dynamic>.from((m['meta'] as Map?) ?? const {}),
+    respondeA: m['responde_a'] as String?,
+    criadaEm: DateTime.parse(m['criada_em'] as String).toLocal(),
+    editadaEm: DateTime.tryParse((m['editada_em'] ?? '').toString())?.toLocal(),
+    anexos: ((m['chat_anexo'] as List?) ?? const [])
+        .map((a) => Anexo.deMapa(a as Map))
+        .toList(),
+    lidoPor: {
+      for (final r in ((m['chat_recibo'] as List?) ?? const []))
+        if ((r as Map)['lido_em'] != null) r['usuario_id'] as String,
+    },
+  );
 }
 
 class Aviso {
-  const Aviso({required this.id, required this.titulo, this.corpo, required this.nivel, required this.escopo, this.setorId, this.autorId, required this.criadoEm});
+  const Aviso({
+    required this.id,
+    required this.titulo,
+    this.corpo,
+    required this.nivel,
+    required this.escopo,
+    this.setorId,
+    this.autorId,
+    required this.criadoEm,
+  });
   final String id;
   final String titulo;
   final String? corpo;
@@ -164,19 +201,29 @@ class Aviso {
   final DateTime criadoEm;
 
   factory Aviso.deMapa(Map m) => Aviso(
-        id: m['id'] as String,
-        titulo: (m['titulo'] as String?) ?? '',
-        corpo: m['corpo'] as String?,
-        nivel: (m['nivel'] as String?) ?? 'info',
-        escopo: (m['escopo'] as String?) ?? 'central',
-        setorId: m['setor_id'] as String?,
-        autorId: m['autor_id'] as String?,
-        criadoEm: DateTime.parse(m['criado_em'] as String).toLocal(),
-      );
+    id: m['id'] as String,
+    titulo: (m['titulo'] as String?) ?? '',
+    corpo: m['corpo'] as String?,
+    nivel: (m['nivel'] as String?) ?? 'info',
+    escopo: (m['escopo'] as String?) ?? 'central',
+    setorId: m['setor_id'] as String?,
+    autorId: m['autor_id'] as String?,
+    criadoEm: DateTime.parse(m['criado_em'] as String).toLocal(),
+  );
 }
 
 class Pedido {
-  const Pedido({required this.id, required this.titulo, this.descricao, this.solicitanteId, this.responsavelId, required this.status, this.prazo, this.canalId, required this.criadoEm});
+  const Pedido({
+    required this.id,
+    required this.titulo,
+    this.descricao,
+    this.solicitanteId,
+    this.responsavelId,
+    required this.status,
+    this.prazo,
+    this.canalId,
+    required this.criadoEm,
+  });
   final String id;
   final String titulo;
   final String? descricao;
@@ -190,20 +237,29 @@ class Pedido {
   String get codigo => 'P-${id.substring(0, 4).toUpperCase()}';
 
   factory Pedido.deMapa(Map m) => Pedido(
-        id: m['id'] as String,
-        titulo: (m['titulo'] as String?) ?? '',
-        descricao: m['descricao'] as String?,
-        solicitanteId: m['solicitante_id'] as String?,
-        responsavelId: m['responsavel_id'] as String?,
-        status: (m['status'] as String?) ?? 'aberto',
-        prazo: DateTime.tryParse((m['prazo'] ?? '').toString()),
-        canalId: m['canal_id'] as String?,
-        criadoEm: DateTime.parse(m['criado_em'] as String).toLocal(),
-      );
+    id: m['id'] as String,
+    titulo: (m['titulo'] as String?) ?? '',
+    descricao: m['descricao'] as String?,
+    solicitanteId: m['solicitante_id'] as String?,
+    responsavelId: m['responsavel_id'] as String?,
+    status: (m['status'] as String?) ?? 'aberto',
+    prazo: DateTime.tryParse((m['prazo'] ?? '').toString()),
+    canalId: m['canal_id'] as String?,
+    criadoEm: DateTime.parse(m['criado_em'] as String).toLocal(),
+  );
 }
 
 class Reuniao {
-  const Reuniao({required this.id, required this.titulo, this.pauta, this.inicio, this.fim, this.criadoPor, this.participantes = const {}, this.canalId});
+  const Reuniao({
+    required this.id,
+    required this.titulo,
+    this.pauta,
+    this.inicio,
+    this.fim,
+    this.criadoPor,
+    this.participantes = const {},
+    this.canalId,
+  });
   final String id;
   final String titulo;
   final String? pauta;
@@ -214,18 +270,18 @@ class Reuniao {
   final Map<String, bool?> participantes;
 
   factory Reuniao.deMapa(Map m) => Reuniao(
-        id: m['id'] as String,
-        titulo: (m['titulo'] as String?) ?? '',
-        pauta: m['pauta'] as String?,
-        inicio: DateTime.tryParse((m['inicio'] ?? '').toString())?.toLocal(),
-        fim: DateTime.tryParse((m['fim'] ?? '').toString())?.toLocal(),
-        criadoPor: m['criado_por'] as String?,
-        canalId: m['canal_id'] as String?,
-        participantes: {
-          for (final p in ((m['chat_reuniao_participante'] as List?) ?? const []))
-            (p as Map)['usuario_id'] as String: p['confirmado'] as bool?,
-        },
-      );
+    id: m['id'] as String,
+    titulo: (m['titulo'] as String?) ?? '',
+    pauta: m['pauta'] as String?,
+    inicio: DateTime.tryParse((m['inicio'] ?? '').toString())?.toLocal(),
+    fim: DateTime.tryParse((m['fim'] ?? '').toString())?.toLocal(),
+    criadoPor: m['criado_por'] as String?,
+    canalId: m['canal_id'] as String?,
+    participantes: {
+      for (final p in ((m['chat_reuniao_participante'] as List?) ?? const []))
+        (p as Map)['usuario_id'] as String: p['confirmado'] as bool?,
+    },
+  );
 }
 
 class Empresa {
@@ -236,14 +292,24 @@ class Empresa {
   final String? regime;
 
   factory Empresa.deMapa(Map m) => Empresa(
-        id: m['id'] as String,
-        nome: ((m['nome_fantasia'] as String?)?.trim().isNotEmpty == true ? m['nome_fantasia'] : m['razao_social']) as String? ?? 'Cliente',
-        cnpj: m['cnpj'] as String?,
-        regime: m['regime_tributario'] as String?,
-      );
+    id: m['id'] as String,
+    nome:
+        ((m['nome_fantasia'] as String?)?.trim().isNotEmpty == true
+                ? m['nome_fantasia']
+                : m['razao_social'])
+            as String? ??
+        'Cliente',
+    cnpj: m['cnpj'] as String?,
+    regime: m['regime_tributario'] as String?,
+  );
 }
 
-const opcoesStatus = [('online', 'Online'), ('reuniao', 'Em reunião'), ('ausente', 'Ausente'), ('nao_interromper', 'Não me interrompam')];
+const opcoesStatus = [
+  ('online', 'Online'),
+  ('reuniao', 'Em reunião'),
+  ('ausente', 'Ausente'),
+  ('nao_interromper', 'Não me interrompam'),
+];
 
 const statusPresenca = {
   'online': 'Online',
@@ -254,6 +320,15 @@ const statusPresenca = {
   'offline': 'Offline',
 };
 
-const statusPedido = {'aberto': 'Aberto', 'em_andamento': 'Em andamento', 'concluido': 'Concluído', 'cancelado': 'Cancelado'};
+const statusPedido = {
+  'aberto': 'Aberto',
+  'em_andamento': 'Em andamento',
+  'concluido': 'Concluído',
+  'cancelado': 'Cancelado',
+};
 
-const nivelAviso = {'info': 'Informativo', 'visto': 'Exige visto', 'urgente': 'Urgente do CEO'};
+const nivelAviso = {
+  'info': 'Informativo',
+  'visto': 'Exige visto',
+  'urgente': 'Urgente do CEO',
+};

@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+
 import 'sons.dart';
 import '../../data/teams/modelos.dart';
 import '../../data/teams/teams_api.dart';
@@ -25,7 +27,8 @@ class TeamsStore extends ChangeNotifier {
   final Map<String, Timer> _adiar = {};
 
   String get eu => api.meuId;
-  int get naoLidasTotal => canais.where((c) => !c.silenciado).fold(0, (s, c) => s + c.naoLidas);
+  int get naoLidasTotal =>
+      canais.where((c) => !c.silenciado).fold(0, (s, c) => s + c.naoLidas);
   List<String> get meusSetores => equipe.pessoa(eu).setores;
 
   Future<void> iniciar() async {
@@ -44,7 +47,10 @@ class TeamsStore extends ChangeNotifier {
 
   void _mudou(String tabela) {
     _adiar[tabela]?.cancel();
-    _adiar[tabela] = Timer(const Duration(milliseconds: 250), () => _recarregar(tabela));
+    _adiar[tabela] = Timer(
+      const Duration(milliseconds: 250),
+      () => _recarregar(tabela),
+    );
   }
 
   Future<void> _recarregar(String t) async {
@@ -105,14 +111,24 @@ class TeamsStore extends ChangeNotifier {
     return c.nome ?? 'Grupo';
   }
 
-  String? outroDaDireta(Canal c) => c.tipo == 'direta' ? c.membros.firstWhere((m) => m != eu, orElse: () => eu) : null;
+  String? outroDaDireta(Canal c) => c.tipo == 'direta'
+      ? c.membros.firstWhere((m) => m != eu, orElse: () => eu)
+      : null;
 
   List<String> alvos(Canal c) {
-    if (c.tipo == 'setor') return equipe.doSetor(c.setorId).map((p) => p.id).where((x) => x != eu).toList();
+    if (c.tipo == 'setor') {
+      return equipe
+          .doSetor(c.setorId)
+          .map((p) => p.id)
+          .where((x) => x != eu)
+          .toList();
+    }
     return c.membros.where((x) => x != eu).toList();
   }
 
-  List<String> participantes(Canal c) => c.tipo == 'setor' ? equipe.doSetor(c.setorId).map((p) => p.id).toList() : c.membros;
+  List<String> participantes(Canal c) => c.tipo == 'setor'
+      ? equipe.doSetor(c.setorId).map((p) => p.id).toList()
+      : c.membros;
 
   Future<void> abrirCanal(String id) async {
     canalAberto = id;
@@ -128,7 +144,11 @@ class TeamsStore extends ChangeNotifier {
   void fecharCanal() => canalAberto = null;
 
   Future<void> _resolverEmpresas(List<Mensagem> ms) async {
-    final faltam = ms.map((m) => m.meta['cliente_id'] as String?).whereType<String>().where((e) => !empresas.containsKey(e)).toList();
+    final faltam = ms
+        .map((m) => m.meta['cliente_id'] as String?)
+        .whereType<String>()
+        .where((e) => !empresas.containsKey(e))
+        .toList();
     if (faltam.isEmpty) return;
     try {
       empresas.addAll(await api.empresas(faltam));
@@ -153,16 +173,35 @@ class TeamsStore extends ChangeNotifier {
     return id;
   }
 
-  List<String> mencoesDe(String texto) => equipe.pessoas.where((p) => texto.contains('@${p.nome}')).map((p) => p.id).toList();
+  List<String> mencoesDe(String texto) => equipe.pessoas
+      .where((p) => texto.contains('@${p.nome}'))
+      .map((p) => p.id)
+      .toList();
 
-  Future<void> enviarTexto(String canal, String texto, {String? respondeA}) async {
+  Future<void> enviarTexto(
+    String canal,
+    String texto, {
+    String? respondeA,
+  }) async {
     final lista = mensagens[canal] ??= [];
-    final tmp = Mensagem(id: 'tmp-${DateTime.now().microsecondsSinceEpoch}', canalId: canal, autorId: eu, corpo: texto,
-        respondeA: respondeA, criadaEm: DateTime.now(), provisoria: true);
+    final tmp = Mensagem(
+      id: 'tmp-${DateTime.now().microsecondsSinceEpoch}',
+      canalId: canal,
+      autorId: eu,
+      corpo: texto,
+      respondeA: respondeA,
+      criadaEm: DateTime.now(),
+      provisoria: true,
+    );
     lista.add(tmp);
     notifyListeners();
     try {
-      await api.enviar(canal, corpo: texto, respondeA: respondeA, mencoes: mencoesDe(texto));
+      await api.enviar(
+        canal,
+        corpo: texto,
+        respondeA: respondeA,
+        mencoes: mencoesDe(texto),
+      );
     } catch (_) {
       lista.remove(tmp);
       notifyListeners();
@@ -172,7 +211,12 @@ class TeamsStore extends ChangeNotifier {
 
   Future<void> citarCliente(String canal, Empresa e, String comentario) async {
     empresas[e.id] = e;
-    await api.enviar(canal, corpo: comentario.isEmpty ? 'Cliente citado' : comentario, meta: {'cliente_id': e.id}, mencoes: mencoesDe(comentario));
+    await api.enviar(
+      canal,
+      corpo: comentario.isEmpty ? 'Cliente citado' : comentario,
+      meta: {'cliente_id': e.id},
+      mencoes: mencoesDe(comentario),
+    );
   }
 
   Future<void> mudarStatus(String st) async {
@@ -189,9 +233,20 @@ class TeamsStore extends ChangeNotifier {
   }
 
   Future<void> carregarAvisos() async {
-    final r = await Future.wait([api.avisos(), api.avisosVistos(), api.contagemVistos()]);
+    final r = await Future.wait([
+      api.avisos(),
+      api.avisosVistos(),
+      api.contagemVistos(),
+    ]);
     final setores = meusSetores.toSet();
-    avisos = (r[0] as List<Aviso>).where((a) => a.escopo != 'setor' || setores.contains(a.setorId) || a.autorId == eu).toList();
+    avisos = (r[0] as List<Aviso>)
+        .where(
+          (a) =>
+              a.escopo != 'setor' ||
+              setores.contains(a.setorId) ||
+              a.autorId == eu,
+        )
+        .toList();
     vistos = r[1] as Set<String>;
     contagemVistos = r[2] as Map<String, int>;
     notifyListeners();

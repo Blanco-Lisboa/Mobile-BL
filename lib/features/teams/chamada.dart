@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
+
 import '../../core/tema.dart';
 import '../../data/teams/modelos.dart';
 import 'comuns.dart';
@@ -44,22 +46,30 @@ class ChamadaController extends ChangeNotifier {
     super.notifyListeners();
   }
 
-  Duration get duracao => inicio == null ? Duration.zero : DateTime.now().difference(inicio!);
+  Duration get duracao =>
+      inicio == null ? Duration.zero : DateTime.now().difference(inicio!);
 
   List<(String, lk.VideoTrack?)> get quadros => [
-        for (final p in sala?.remoteParticipants.values ?? const <lk.RemoteParticipant>[])
-          (
-            p.identity,
-            p.videoTrackPublications
-                .where((pub) => pub.track != null && !pub.muted)
-                .map((pub) => pub.track as lk.VideoTrack)
-                .firstOrNull,
-          ),
-      ];
+    for (final p
+        in sala?.remoteParticipants.values ?? const <lk.RemoteParticipant>[])
+      (
+        p.identity,
+        p.videoTrackPublications
+            .where((pub) => pub.track != null && !pub.muted)
+            .map((pub) => pub.track as lk.VideoTrack)
+            .firstOrNull,
+      ),
+  ];
 
   lk.VideoTrack? get videoLocal {
-    for (final pub in sala?.localParticipant?.videoTrackPublications ?? const <lk.LocalTrackPublication>[]) {
-      if (pub.track != null && !pub.muted && pub.source == lk.TrackSource.camera) return pub.track as lk.VideoTrack;
+    for (final pub
+        in sala?.localParticipant?.videoTrackPublications ??
+            const <lk.LocalTrackPublication>[]) {
+      if (pub.track != null &&
+          !pub.muted &&
+          pub.source == lk.TrackSource.camera) {
+        return pub.track as lk.VideoTrack;
+      }
     }
     return null;
   }
@@ -89,9 +99,17 @@ class ChamadaController extends ChangeNotifier {
     }
     final meuNome = store.equipe.pessoa(store.eu).nome;
     for (final u in alvos) {
-      unawaited(store.api.enviarSinal(u, 'ligar', {
-        'chamada': id, 'canal': c.id, 'tipo': t, 'modo': 'lk', 'nome': meuNome, 'canal_nome': c.tipo == 'direta' ? meuNome : nome, 'participantes': participantes,
-      }));
+      unawaited(
+        store.api.enviarSinal(u, 'ligar', {
+          'chamada': id,
+          'canal': c.id,
+          'tipo': t,
+          'modo': 'lk',
+          'nome': meuNome,
+          'canal_nome': c.tipo == 'direta' ? meuNome : nome,
+          'participantes': participantes,
+        }),
+      );
     }
     _limite = Timer(const Duration(seconds: 45), () {
       if (estado == EstadoChamada.chamando) encerrar('Chamada não atendida');
@@ -101,15 +119,22 @@ class ChamadaController extends ChangeNotifier {
   void _sinal(String ev, Map<String, dynamic> p) {
     if (ev == 'ligar') {
       if (estado != EstadoChamada.nenhuma) {
-        store.api.enviarSinal(p['de'] as String, 'ocupado', {'chamada': p['chamada']});
+        store.api.enviarSinal(p['de'] as String, 'ocupado', {
+          'chamada': p['chamada'],
+        });
         return;
       }
       id = p['chamada'] as String?;
       canalId = p['canal'] as String?;
       tipo = (p['tipo'] as String?) ?? 'voz';
       de = p['de'] as String?;
-      nome = (p['canal_nome'] as String?) ?? (p['nome'] as String?) ?? store.equipe.pessoa(de).nome;
-      participantes = ((p['participantes'] as List?) ?? [de]).map((e) => e.toString()).toList();
+      nome =
+          (p['canal_nome'] as String?) ??
+          (p['nome'] as String?) ??
+          store.equipe.pessoa(de).nome;
+      participantes = ((p['participantes'] as List?) ?? [de])
+          .map((e) => e.toString())
+          .toList();
       dono = false;
       estado = EstadoChamada.tocando;
       notifyListeners();
@@ -123,7 +148,9 @@ class ChamadaController extends ChangeNotifier {
     switch (ev) {
       case 'entrou':
         if (estado == EstadoChamada.tocando) return;
-        if (quem != null && !participantes.contains(quem)) participantes.add(quem);
+        if (quem != null && !participantes.contains(quem)) {
+          participantes.add(quem);
+        }
         if (estado == EstadoChamada.chamando) {
           estado = EstadoChamada.ativa;
           inicio ??= DateTime.now();
@@ -137,12 +164,17 @@ class ChamadaController extends ChangeNotifier {
           _limpar();
           return;
         }
-        if ((sala?.remoteParticipants.isEmpty ?? true) && estado == EstadoChamada.ativa) encerrar();
+        if ((sala?.remoteParticipants.isEmpty ?? true) &&
+            estado == EstadoChamada.ativa) {
+          encerrar();
+        }
       case 'recusar':
       case 'ocupado':
         if (estado == EstadoChamada.chamando) {
           recusas++;
-          if (recusas >= participantes.length - 1) encerrar(ev == 'ocupado' ? 'Ocupado' : 'Chamada recusada');
+          if (recusas >= participantes.length - 1) {
+            encerrar(ev == 'ocupado' ? 'Ocupado' : 'Chamada recusada');
+          }
         }
     }
   }
@@ -173,14 +205,20 @@ class ChamadaController extends ChangeNotifier {
     final quem = de;
     final ch = id;
     await _sairSala();
-    if (quem != null) unawaited(store.api.enviarSinal(quem, 'recusar', {'chamada': ch}));
+    if (quem != null) {
+      unawaited(store.api.enviarSinal(quem, 'recusar', {'chamada': ch}));
+    }
     _limpar();
   }
 
   Future<bool> _entrarSala(bool video) async {
-    final passe = await store.api.passeLigacao(canalId!).catchError((_) => null);
+    final passe = await store.api
+        .passeLigacao(canalId!)
+        .catchError((_) => null);
     if (passe == null) return false;
-    final room = lk.Room(roomOptions: const lk.RoomOptions(adaptiveStream: true, dynacast: true));
+    final room = lk.Room(
+      roomOptions: const lk.RoomOptions(adaptiveStream: true, dynacast: true),
+    );
     final ouv = room.createListener();
     ouv
       ..on<lk.ParticipantConnectedEvent>((_) {
@@ -263,7 +301,10 @@ class ChamadaController extends ChangeNotifier {
 
   void _comecarRelogio() {
     _relogio?.cancel();
-    _relogio = Timer.periodic(const Duration(seconds: 1), (_) => notifyListeners());
+    _relogio = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => notifyListeners(),
+    );
   }
 
   Future<void> encerrar([String? motivo]) async {
@@ -285,10 +326,17 @@ class ChamadaController extends ChangeNotifier {
     } catch (_) {}
     if (eraDono && canal != null) {
       final dur = teve == null ? 0 : DateTime.now().difference(teve).inSeconds;
-      final mm = '${(dur ~/ 60).toString().padLeft(2, '0')}:${(dur % 60).toString().padLeft(2, '0')}';
+      final mm =
+          '${(dur ~/ 60).toString().padLeft(2, '0')}:${(dur % 60).toString().padLeft(2, '0')}';
       try {
         await store.api.encerrarChamada(ch);
-        await store.api.enviar(canal, tipo: 'sistema', corpo: '${t == 'video' ? '🎥 Chamada de vídeo' : '📞 Chamada de voz'} · ${motivo ?? mm}', meta: {'chamada_id': ch});
+        await store.api.enviar(
+          canal,
+          tipo: 'sistema',
+          corpo:
+              '${t == 'video' ? '🎥 Chamada de vídeo' : '📞 Chamada de voz'} · ${motivo ?? mm}',
+          meta: {'chamada_id': ch},
+        );
       } catch (_) {}
     }
   }
@@ -335,13 +383,18 @@ class CamadaChamada extends StatelessWidget {
           c.aviso = null;
           WidgetsBinding.instance.addPostFrameCallback((_) {
             final m = ScaffoldMessenger.maybeOf(context);
-            m?.showSnackBar(SnackBar(content: Text(a), behavior: SnackBarBehavior.floating));
+            m?.showSnackBar(
+              SnackBar(content: Text(a), behavior: SnackBarBehavior.floating),
+            );
           });
         }
-        return Stack(children: [
-          child,
-          if (c.estado != EstadoChamada.nenhuma) Positioned.fill(child: _TelaChamada(c: c)),
-        ]);
+        return Stack(
+          children: [
+            child,
+            if (c.estado != EstadoChamada.nenhuma)
+              Positioned.fill(child: _TelaChamada(c: c)),
+          ],
+        );
       },
     );
   }
@@ -359,111 +412,256 @@ class _TelaChamada extends StatelessWidget {
     final d = c.duracao;
     final sub = switch (c.estado) {
       EstadoChamada.chamando => 'Chamando…',
-      EstadoChamada.tocando => 'TEAM\'s · chamada de ${c.tipo == 'video' ? 'vídeo' : 'voz'}',
+      EstadoChamada.tocando =>
+        'TEAM\'s · chamada de ${c.tipo == 'video' ? 'vídeo' : 'voz'}',
       EstadoChamada.conectando => 'Conectando…',
-      _ => '${c.tipo == 'video' ? 'Vídeo' : 'Voz'} · ${d.inMinutes.toString().padLeft(2, '0')}:${(d.inSeconds % 60).toString().padLeft(2, '0')}',
+      _ =>
+        '${c.tipo == 'video' ? 'Vídeo' : 'Voz'} · ${d.inMinutes.toString().padLeft(2, '0')}:${(d.inSeconds % 60).toString().padLeft(2, '0')}',
     };
     return Material(
       color: Colors.transparent,
       child: Container(
         decoration: const BoxDecoration(
-          gradient: RadialGradient(center: Alignment(0, -.8), radius: 1.3, colors: [Color(0xFF1B3A5E), Color(0xFF061527), Color(0xFF02080F)], stops: [0, .55, 1]),
+          gradient: RadialGradient(
+            center: Alignment(0, -.8),
+            radius: 1.3,
+            colors: [Color(0xFF1B3A5E), Color(0xFF061527), Color(0xFF02080F)],
+            stops: [0, .55, 1],
+          ),
         ),
         child: SafeArea(
-          child: Stack(children: [
-            if (remotos.isNotEmpty)
-              Positioned.fill(
-                bottom: 120,
-                child: remotos.length == 1
-                    ? _quadro(remotos.first)
-                    : GridView.count(
-                        padding: const EdgeInsets.fromLTRB(10, 40, 10, 0),
-                        crossAxisCount: 2, mainAxisSpacing: 8, crossAxisSpacing: 8, childAspectRatio: .75,
-                        children: [for (final q in remotos) ClipRRect(borderRadius: BorderRadius.circular(16), child: _quadro(q))],
+          child: Stack(
+            children: [
+              if (remotos.isNotEmpty)
+                Positioned.fill(
+                  bottom: 120,
+                  child: remotos.length == 1
+                      ? _quadro(remotos.first)
+                      : GridView.count(
+                          padding: const EdgeInsets.fromLTRB(10, 40, 10, 0),
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 8,
+                          crossAxisSpacing: 8,
+                          childAspectRatio: .75,
+                          children: [
+                            for (final q in remotos)
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: _quadro(q),
+                              ),
+                          ],
+                        ),
+                ),
+              if (remotos.isEmpty)
+                Align(
+                  alignment: const Alignment(0, -.35),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Cores.dourado.withValues(alpha: .08),
+                              spreadRadius: 10,
+                            ),
+                            BoxShadow(
+                              color: Cores.dourado.withValues(alpha: .04),
+                              spreadRadius: 22,
+                            ),
+                          ],
+                        ),
+                        child: pessoa != null
+                            ? bolinhaPessoa(pessoa, tamanho: 96)
+                            : Bolinha(texto: iniciais(c.nome), tamanho: 96),
                       ),
-              ),
-            if (remotos.isEmpty)
-              Align(
-                alignment: const Alignment(0, -.35),
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  Container(
-                    decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
-                      BoxShadow(color: Cores.dourado.withValues(alpha: .08), spreadRadius: 10),
-                      BoxShadow(color: Cores.dourado.withValues(alpha: .04), spreadRadius: 22),
-                    ]),
-                    child: pessoa != null
-                        ? bolinhaPessoa(pessoa, tamanho: 96)
-                        : Bolinha(texto: iniciais(c.nome), tamanho: 96),
+                      const SizedBox(height: 16),
+                      Text(
+                        c.nome,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        sub,
+                        style: const TextStyle(
+                          color: Color(0xFF9DB0C6),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  Text(c.nome, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 4),
-                  Text(sub, style: const TextStyle(color: Color(0xFF9DB0C6), fontSize: 12)),
-                ]),
-              ),
-            if (remotos.isNotEmpty)
+                ),
+              if (remotos.isNotEmpty)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 12,
+                  child: Text(
+                    sub,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      shadows: [Shadow(blurRadius: 6)],
+                    ),
+                  ),
+                ),
+              if (local != null)
+                Positioned(
+                  right: 16,
+                  top: 40,
+                  width: 92,
+                  height: 128,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: lk.VideoTrackRenderer(
+                      local,
+                      fit: lk.VideoViewFit.cover,
+                      mirrorMode: lk.VideoViewMirrorMode.mirror,
+                    ),
+                  ),
+                ),
               Positioned(
-                left: 0, right: 0, top: 12,
-                child: Text(sub, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 12, shadows: [Shadow(blurRadius: 6)])),
+                left: 22,
+                right: 22,
+                bottom: 30,
+                child: c.estado == EstadoChamada.tocando
+                    ? _tocando()
+                    : _controles(),
               ),
-            if (local != null)
-              Positioned(
-                right: 16, top: 40, width: 92, height: 128,
-                child: ClipRRect(borderRadius: BorderRadius.circular(14), child: lk.VideoTrackRenderer(local, fit: lk.VideoViewFit.cover, mirrorMode: lk.VideoViewMirrorMode.mirror)),
-              ),
-            Positioned(left: 22, right: 22, bottom: 30, child: c.estado == EstadoChamada.tocando ? _tocando() : _controles()),
-          ]),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _quadro((String, lk.VideoTrack?) q) {
-    if (q.$2 != null) return lk.VideoTrackRenderer(q.$2!, fit: lk.VideoViewFit.cover);
+    if (q.$2 != null) {
+      return lk.VideoTrackRenderer(q.$2!, fit: lk.VideoViewFit.cover);
+    }
     final p = c.store.equipe.pessoa(q.$1);
     return Container(
       color: const Color(0xFF0E2238),
       alignment: Alignment.center,
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        bolinhaPessoa(p, tamanho: 72),
-        const SizedBox(height: 10),
-        Text(p.nome, style: const TextStyle(color: Colors.white, fontSize: 13)),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          bolinhaPessoa(p, tamanho: 72),
+          const SizedBox(height: 10),
+          Text(
+            p.nome,
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _tocando() => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        _grande(Icons.call_end_rounded, Cores.vermelho, 'Recusar', c.recusar),
-        if (c.tipo == 'video') _grande(Icons.call_rounded, const Color(0xFF3A4B60), 'Só voz', () => c.atender(false)),
-        _grande(c.tipo == 'video' ? Icons.videocam_rounded : Icons.call_rounded, Cores.verde, 'Atender', () => c.atender(c.tipo == 'video')),
-      ]);
+  Widget _tocando() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      _grande(Icons.call_end_rounded, Cores.vermelho, 'Recusar', c.recusar),
+      if (c.tipo == 'video')
+        _grande(
+          Icons.call_rounded,
+          const Color(0xFF3A4B60),
+          'Só voz',
+          () => c.atender(false),
+        ),
+      _grande(
+        c.tipo == 'video' ? Icons.videocam_rounded : Icons.call_rounded,
+        Cores.verde,
+        'Atender',
+        () => c.atender(c.tipo == 'video'),
+      ),
+    ],
+  );
 
-  Widget _controles() => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        _pequeno(c.mudo ? Icons.mic_off_rounded : Icons.mic_none_rounded, 'Mudo', c.mudo, c.alternarMudo),
-        _pequeno(c.camera ? Icons.videocam_rounded : Icons.videocam_off_outlined, 'Câmera', c.camera, c.alternarCamera),
-        _pequeno(Icons.screen_share_outlined, 'Tela', c.tela, c.alternarTela),
-        _pequeno(Icons.call_end_rounded, 'Encerrar', false, () => c.encerrar(), vermelho: true),
-      ]);
+  Widget _controles() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      _pequeno(
+        c.mudo ? Icons.mic_off_rounded : Icons.mic_none_rounded,
+        'Mudo',
+        c.mudo,
+        c.alternarMudo,
+      ),
+      _pequeno(
+        c.camera ? Icons.videocam_rounded : Icons.videocam_off_outlined,
+        'Câmera',
+        c.camera,
+        c.alternarCamera,
+      ),
+      _pequeno(Icons.screen_share_outlined, 'Tela', c.tela, c.alternarTela),
+      _pequeno(
+        Icons.call_end_rounded,
+        'Encerrar',
+        false,
+        () => c.encerrar(),
+        vermelho: true,
+      ),
+    ],
+  );
 
-  Widget _grande(IconData ic, Color cor, String t, VoidCallback f) => GestureDetector(
+  Widget _grande(IconData ic, Color cor, String t, VoidCallback f) =>
+      GestureDetector(
         onTap: f,
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Container(width: 62, height: 62, decoration: BoxDecoration(color: cor, shape: BoxShape.circle), child: Icon(ic, color: Colors.white, size: 26)),
-          const SizedBox(height: 8),
-          Text(t, style: const TextStyle(color: Color(0xFFC9D6E4), fontSize: 11)),
-        ]),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 62,
+              height: 62,
+              decoration: BoxDecoration(color: cor, shape: BoxShape.circle),
+              child: Icon(ic, color: Colors.white, size: 26),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              t,
+              style: const TextStyle(color: Color(0xFFC9D6E4), fontSize: 11),
+            ),
+          ],
+        ),
       );
 
-  Widget _pequeno(IconData ic, String t, bool ligado, VoidCallback f, {bool vermelho = false}) => GestureDetector(
-        onTap: f,
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Container(
-            width: 52, height: 52,
-            decoration: BoxDecoration(color: vermelho ? Cores.vermelho : (ligado ? Colors.white : Colors.white.withValues(alpha: .12)), shape: BoxShape.circle),
-            child: Icon(ic, color: ligado && !vermelho ? Cores.marinho : Colors.white, size: 21),
+  Widget _pequeno(
+    IconData ic,
+    String t,
+    bool ligado,
+    VoidCallback f, {
+    bool vermelho = false,
+  }) => GestureDetector(
+    onTap: f,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: vermelho
+                ? Cores.vermelho
+                : (ligado ? Colors.white : Colors.white.withValues(alpha: .12)),
+            shape: BoxShape.circle,
           ),
-          const SizedBox(height: 7),
-          Text(t, style: const TextStyle(color: Color(0xFF9DB0C6), fontSize: 9.5)),
-        ]),
-      );
+          child: Icon(
+            ic,
+            color: ligado && !vermelho ? Cores.marinho : Colors.white,
+            size: 21,
+          ),
+        ),
+        const SizedBox(height: 7),
+        Text(
+          t,
+          style: const TextStyle(color: Color(0xFF9DB0C6), fontSize: 9.5),
+        ),
+      ],
+    ),
+  );
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'core/area/area_segura.dart';
 import 'core/sessao.dart';
 import 'core/tema.dart';
@@ -11,7 +12,12 @@ import 'features/teams/sons.dart';
 import 'features/teams/teams_store.dart';
 
 class AppBl extends StatefulWidget {
-  const AppBl({super.key, required this.sessao, required this.perfil, this.criarTeams});
+  const AppBl({
+    super.key,
+    required this.sessao,
+    required this.perfil,
+    this.criarTeams,
+  });
   final Sessao sessao;
   final PerfilRepo perfil;
   final TeamsApi Function()? criarTeams;
@@ -66,14 +72,25 @@ class _AppBlState extends State<AppBl> {
       theme: temaClaro(),
       builder: (context, filho) => Listener(
         onPointerDown: (_) => Sons.i.destravar(),
-        child: AreaSegura(child: chamada == null ? filho! : CamadaChamada(controle: chamada!, child: filho!)),
+        child: AreaSegura(
+          child: chamada == null
+              ? filho!
+              : CamadaChamada(controle: chamada!, child: filho!),
+        ),
       ),
       home: ListenableBuilder(
         listenable: widget.sessao,
         builder: (_, _) => switch (widget.sessao.estado) {
-          EstadoSessao.carregando => const Scaffold(backgroundColor: Cores.loginFundo),
+          EstadoSessao.carregando => const Scaffold(
+            backgroundColor: Cores.loginFundo,
+          ),
           EstadoSessao.fora => TelaLogin(sessao: widget.sessao),
-          EstadoSessao.dentro => TelaInicio(sessao: widget.sessao, perfil: widget.perfil, teams: store, chamada: chamada),
+          EstadoSessao.dentro => TelaInicio(
+            sessao: widget.sessao,
+            perfil: widget.perfil,
+            teams: store,
+            chamada: chamada,
+          ),
         },
       ),
     );

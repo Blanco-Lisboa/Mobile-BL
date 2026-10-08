@@ -1,6 +1,8 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ErroLogin implements Exception { const ErroLogin(); }
+class ErroLogin implements Exception {
+  const ErroLogin();
+}
 
 abstract class AuthRepo {
   bool get temSessaoBl;
@@ -36,7 +38,10 @@ class AuthRepoSupabase implements AuthRepo {
   @override
   Future<void> entrarTeams() async {
     final token = bl.auth.currentSession?.accessToken;
-    final r = await teams.functions.invoke('teams-entrar', body: {'bl_token': token});
+    final r = await teams.functions.invoke(
+      'teams-entrar',
+      body: {'bl_token': token},
+    );
     final d = r.data as Map;
     if (d['ok'] != true) throw Exception('teams');
     await teams.auth.setSession(d['refresh_token'] as String);
@@ -44,7 +49,11 @@ class AuthRepoSupabase implements AuthRepo {
 
   @override
   Future<void> sair() async {
-    try { await teams.auth.signOut(); } catch (_) {}
-    try { await bl.auth.signOut(); } catch (_) {}
+    try {
+      await teams.auth.signOut();
+    } catch (_) {}
+    try {
+      await bl.auth.signOut();
+    } catch (_) {}
   }
 }

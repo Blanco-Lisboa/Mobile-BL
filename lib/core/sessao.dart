@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../data/auth_repo.dart';
 
 enum EstadoSessao { carregando, fora, dentro }

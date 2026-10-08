@@ -1,4 +1,5 @@
 import 'dart:js_interop';
+
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
@@ -18,7 +19,8 @@ class _AreaSeguraState extends State<AreaSegura> {
   void initState() {
     super.initState();
     final d = web.document.createElement('div') as web.HTMLDivElement;
-    d.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;'
+    d.style.cssText =
+        'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;'
         'padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);'
         'padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);';
     web.document.body?.append(d);
@@ -35,7 +37,12 @@ class _AreaSeguraState extends State<AreaSegura> {
     final d = _medidor;
     if (d == null) return;
     final c = web.window.getComputedStyle(d);
-    final novo = EdgeInsets.fromLTRB(_px(c.paddingLeft), _px(c.paddingTop), _px(c.paddingRight), _px(c.paddingBottom));
+    final novo = EdgeInsets.fromLTRB(
+      _px(c.paddingLeft),
+      _px(c.paddingTop),
+      _px(c.paddingRight),
+      _px(c.paddingBottom),
+    );
     if (novo != _area && mounted) setState(() => _area = novo);
   }
 
@@ -56,7 +63,12 @@ class _AreaSeguraState extends State<AreaSegura> {
       mq.padding.right > _area.right ? mq.padding.right : _area.right,
       mq.padding.bottom > _area.bottom ? mq.padding.bottom : _area.bottom,
     );
-    final semTeclado = mq.viewInsets.bottom > 0 ? area.copyWith(bottom: 0) : area;
-    return MediaQuery(data: mq.copyWith(padding: semTeclado, viewPadding: area), child: widget.child);
+    final semTeclado = mq.viewInsets.bottom > 0
+        ? area.copyWith(bottom: 0)
+        : area;
+    return MediaQuery(
+      data: mq.copyWith(padding: semTeclado, viewPadding: area),
+      child: widget.child,
+    );
   }
 }
