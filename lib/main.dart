@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
@@ -9,6 +10,7 @@ import 'data/perfil_repo.dart';
 import 'data/teams/teams_api.dart';
 
 Future<void> main() async {
+  usePathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(url: Bancos.blUrl, publishableKey: Bancos.blChave);
   final bl = Supabase.instance.client;

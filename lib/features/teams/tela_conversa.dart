@@ -180,18 +180,20 @@ class _TelaConversaState extends State<TelaConversa> {
 
   Future<void> _gravar() async {
     final g = AudioRecorder();
-    if (!await g.hasPermission()) {
+    _opus = await g.isEncoderSupported(AudioEncoder.opus);
+    try {
+      await g.start(
+        RecordConfig(
+          encoder: _opus ? AudioEncoder.opus : AudioEncoder.aacLc,
+          bitRate: 32000,
+        ),
+        path: '',
+      );
+    } catch (_) {
+      await g.dispose();
       if (mounted) avisar(context, 'Sem acesso ao microfone.');
       return;
     }
-    _opus = await g.isEncoderSupported(AudioEncoder.opus);
-    await g.start(
-      RecordConfig(
-        encoder: _opus ? AudioEncoder.opus : AudioEncoder.aacLc,
-        bitRate: 32000,
-      ),
-      path: '',
-    );
     setState(() {
       _gravador = g;
       _segundos = 0;
@@ -918,7 +920,8 @@ class _TelaConversaState extends State<TelaConversa> {
     if (a.tipo == 'audio') return _Audio(store: s, anexo: a, minha: minha);
     if (a.tipo == 'imagem') {
       return FutureBuilder<String>(
-        future: a.url == null ? null : s.api.linkAnexo(a.url!),
+        future: a.url == null ? null : s.link(a.url!),
+        initialData: a.url == null ? null : s.linkPronto(a.url!),
         builder: (_, snap) => GestureDetector(
           onTap: snap.data == null
               ? null
@@ -934,7 +937,7 @@ class _TelaConversaState extends State<TelaConversa> {
             ),
             child: snap.data == null
                 ? null
-                : Image.network(snap.data!, fit: BoxFit.cover),
+                : Image.network(snap.data!, fit: BoxFit.cover, gaplessPlayback: true),
           ),
         ),
       );
@@ -946,7 +949,7 @@ class _TelaConversaState extends State<TelaConversa> {
     return GestureDetector(
       onTap: () async {
         if (a.url == null) return;
-        final u = await s.api.linkAnexo(a.url!);
+        final u = await s.link(a.url!);
         launchUrl(Uri.parse(u));
       },
       child: Container(
@@ -1211,7 +1214,7 @@ class _AudioState extends State<_Audio> {
 
   Future<void> _alternar() async {
     if (_p == null) {
-      final url = await widget.store.api.linkAnexo(widget.anexo.url!);
+      final url = await widget.store.link(widget.anexo.url!);
       _p = AudioPlayer();
       await _p!.setUrl(url);
       _p!.playerStateStream.listen((st) {

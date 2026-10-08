@@ -61,17 +61,37 @@ class TeamsStore extends ChangeNotifier {
       switch (t) {
         case 'chat_mensagem':
         case 'chat_anexo':
-        case 'chat_recibo':
           final antes = naoLidasTotal;
           canais = await api.canais();
           final c = canalAberto;
           if (c != null) {
-            mensagens[c] = await api.mensagens(c);
-            await api.marcarLido(c);
+            final novas = await api.mensagens(c);
+            final eraUltima = mensagens[c]?.lastOrNull?.id;
+            mensagens[c] = novas;
+            final ultima = novas.lastOrNull;
+            if (t == 'chat_mensagem' &&
+                ultima != null &&
+                ultima.id != eraUltima &&
+                ultima.autorId != eu) {
+              await api.marcarLido(c);
+            }
             canais.where((x) => x.id == c).forEach((x) => x.naoLidas = 0);
-            await _resolverEmpresas(mensagens[c]!);
+            await _resolverEmpresas(novas);
           }
           if (t == 'chat_mensagem' && naoLidasTotal > antes) Sons.i.mensagem();
+        case 'chat_recibo':
+          final c = canalAberto;
+          if (c == null) return;
+          final novas = await api.mensagens(c);
+          final atual = mensagens[c] ?? const <Mensagem>[];
+          final mudou =
+              novas.length != atual.length ||
+              [
+                for (var i = 0; i < novas.length; i++)
+                  novas[i].lidoPor.length != atual[i].lidoPor.length,
+              ].any((x) => x);
+          if (!mudou) return;
+          mensagens[c] = novas;
         case 'chat_canal':
         case 'chat_canal_membro':
           canais = await api.canais();
@@ -100,9 +120,11 @@ class TeamsStore extends ChangeNotifier {
   }
 
   bool _registrando = false;
+  bool _avisosFeitos = false;
 
   Future<void> ativarAvisos() async {
-    if (!Push.suportado || _registrando) return;
+    if (!Push.suportado || _registrando || _avisosFeitos) return;
+    _avisosFeitos = true;
     if (Push.permissao == 'default') {
       final r = await Push.pedir();
       if (r != 'granted') return;
@@ -174,6 +196,21 @@ class TeamsStore extends ChangeNotifier {
   }
 
   void fecharCanal() => canalAberto = null;
+
+  final Map<String, (String, DateTime)> _links = {};
+
+  String? linkPronto(String caminho) {
+    final g = _links[caminho];
+    return g != null && DateTime.now().isBefore(g.$2) ? g.$1 : null;
+  }
+
+  Future<String> link(String caminho) async {
+    final g = _links[caminho];
+    if (g != null && DateTime.now().isBefore(g.$2)) return g.$1;
+    final u = await api.linkAnexo(caminho);
+    _links[caminho] = (u, DateTime.now().add(const Duration(minutes: 50)));
+    return u;
+  }
 
   Future<void> _resolverEmpresas(List<Mensagem> ms) async {
     final faltam = ms
