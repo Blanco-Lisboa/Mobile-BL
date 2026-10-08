@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'core/area/area_segura.dart';
 import 'core/sessao.dart';
 import 'core/tema.dart';
 import 'data/perfil_repo.dart';
@@ -62,7 +63,7 @@ class _AppBlState extends State<AppBl> {
       title: 'BL CEO',
       debugShowCheckedModeBanner: false,
       theme: temaClaro(),
-      builder: (context, filho) => chamada == null ? filho! : CamadaChamada(controle: chamada!, child: filho!),
+      builder: (context, filho) => AreaSegura(child: chamada == null ? filho! : CamadaChamada(controle: chamada!, child: filho!)),
       home: ListenableBuilder(
         listenable: widget.sessao,
         builder: (_, _) => switch (widget.sessao.estado) {

@@ -95,7 +95,7 @@ class _FolhaPerfilState extends State<_FolhaPerfil> {
   Widget build(BuildContext context) {
     final vis = p == null ? null : {...p!, if (novaFoto != null) 'foto_url': novaFoto};
     return Padding(
-      padding: EdgeInsets.fromLTRB(18, 10, 18, 18 + MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.fromLTRB(18, 10, 18, 18 + MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom),
       child: p == null
           ? const SizedBox(height: 240, child: Center(child: CircularProgressIndicator(strokeWidth: 2)))
           : SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [

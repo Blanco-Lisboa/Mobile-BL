@@ -172,7 +172,7 @@ class _TelaConversaState extends State<TelaConversa> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
-        margin: const EdgeInsets.fromLTRB(8, 0, 8, 24),
+        margin: EdgeInsets.fromLTRB(8, 0, 8, 12 + MediaQuery.of(ctx).padding.bottom),
         padding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
         child: GridView.count(
