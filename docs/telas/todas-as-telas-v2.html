@@ -1,0 +1,529 @@
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><style>
+  .y-row{display:flex;gap:40px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+  .y-cap{font:500 11px Inter,sans-serif;color:#7C93B0;text-align:center;margin-top:12px;text-transform:uppercase;letter-spacing:.14em}
+  .y-phone{width:300px;height:640px;border-radius:50px;padding:9px;background:linear-gradient(145deg,#2a2f36,#0b0d10);box-shadow:0 0 0 1.5px #3a4048 inset,0 30px 60px -24px rgba(0,0,0,.6)}
+  .y-scr{width:100%;height:100%;border-radius:42px;overflow:hidden;position:relative;font-family:Inter,-apple-system,sans-serif}
+  .y-island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:88px;height:26px;border-radius:18px;background:#000;z-index:5}
+  .y-status{position:absolute;top:14px;left:26px;right:22px;display:flex;justify-content:space-between;font:600 12px Inter;z-index:4}
+  .y-hb{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:104px;height:4px;border-radius:2px}
+
+  .y-login{background:radial-gradient(110% 65% at 50% 0%,#12304F 0%,#061527 50%,#020A14 100%);color:#EEF3F9}
+  .y-login .y-status{color:#EEF3F9}.y-login .y-hb{background:rgba(255,255,255,.45)}
+  .y-glow{position:absolute;width:200px;height:200px;border-radius:50%;left:50%;top:118px;transform:translateX(-50%);background:radial-gradient(circle,rgba(237,180,73,.18),rgba(237,180,73,0) 65%)}
+  .y-spin{position:absolute;left:50%;top:150px;width:116px;height:116px;transform:translateX(-50%);perspective:600px}
+  .y-spin img{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+  .y-anel{width:115px}.y-esf{width:103px;animation:girar 7s linear infinite}
+  @keyframes girar{from{transform:translate(-50%,-50%) rotateY(0)}to{transform:translate(-50%,-50%) rotateY(360deg)}}
+  .y-form{position:absolute;left:28px;right:28px;bottom:74px}
+  .y-t{font:500 19px Inter;letter-spacing:-.01em;text-align:center}
+  .y-s{font:400 10px Inter;color:#8FA3BA;text-align:center;letter-spacing:.24em;text-transform:uppercase;margin:6px 0 28px}
+  .y-in{height:42px;border-bottom:1px solid rgba(255,255,255,.14);display:flex;align-items:center;color:#7F93AA;font:400 13px Inter;margin-bottom:8px}
+  .y-btn{height:42px;border-radius:10px;background:#F2F4F7;color:#0A1B30;font:500 14px Inter;display:flex;align-items:center;justify-content:center;margin-top:22px;letter-spacing:.01em}
+  .y-face{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:14px;font:400 12px Inter;color:#9DB0C6}
+  .y-fid{width:15px;height:15px;border:1.5px solid #9DB0C6;border-radius:5px}
+
+  .y-app{background:#F7F8FA;color:#0E1A2B}
+  .y-app .y-status{color:#0E1A2B}.y-app .y-hb{background:rgba(14,26,43,.35)}
+  .y-home{position:absolute;inset:0;padding:56px 20px 0}
+  .y-hdr{display:flex;align-items:center;justify-content:space-between}
+  .y-date{font:400 11px Inter;color:#7A8797;text-transform:uppercase;letter-spacing:.1em}
+  .y-hello{font:600 21px Inter;letter-spacing:-.02em;margin-top:3px}
+  .y-av{width:32px;height:32px;border-radius:50%;background:#0A1B30;color:#EDB449;display:flex;align-items:center;justify-content:center;font:500 11px Inter}
+  .y-lbl{font:500 10px Inter;color:#8B97A6;letter-spacing:.16em;text-transform:uppercase;margin:26px 0 10px}
+  .y-card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 2px rgba(14,26,43,.04),0 8px 24px -12px rgba(14,26,43,.12);border:1px solid #EEF0F3}
+  .y-ch{display:flex;align-items:center;gap:11px}
+  .y-ci{width:34px;height:34px;border-radius:10px;background:#0A1B30;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .y-ci svg{width:17px;height:17px}
+  .y-ct{font:600 14px Inter;letter-spacing:-.01em}.y-cs{font:400 11px Inter;color:#7A8797;margin-top:1px}
+  .y-badge{margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#EDB449;color:#1A1204;font:600 10px Inter;display:flex;align-items:center;justify-content:center;padding:0 5px}
+  .y-msg{display:flex;gap:9px;align-items:center;margin-top:12px;padding-top:11px;border-top:1px solid #F0F2F5}
+  .y-ma{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#E6EBF1;color:#3D4D60;font:500 9px Inter;display:flex;align-items:center;justify-content:center}
+  .y-mt{font:500 11px Inter}.y-mp{font:400 11px Inter;color:#7A8797;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+  .y-mh{margin-left:auto;font:400 10px Inter;color:#9AA5B2}
+  .p-sheet{position:absolute;left:0;right:0;bottom:0;top:60px;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -10px 30px rgba(14,26,43,.12);padding:10px 18px 0;font-family:Inter}
+  .p-grab{width:36px;height:4px;border-radius:2px;background:#D9DEE5;margin:0 auto 12px}
+  .p-top{display:flex;justify-content:space-between;align-items:center;font:600 15px Inter;color:#0E1A2B}
+  .p-ok{font:500 13px Inter;color:#B07F1C}
+  .p-av{width:64px;height:64px;border-radius:50%;background:#0A1B30;color:#EDB449;display:flex;align-items:center;justify-content:center;font:500 20px Inter;margin:16px auto 6px}
+  .p-chg{text-align:center;font:500 12px Inter;color:#B07F1C;margin-bottom:14px}
+  .p-grp{background:#F7F8FA;border-radius:12px;margin-bottom:12px}
+  .p-it{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;border-bottom:1px solid #EEF0F3;font:400 12px Inter}
+  .p-it:last-child{border-bottom:0}
+  .p-k{color:#7A8797}.p-v{color:#0E1A2B;font-weight:500}.p-lock{color:#A9B3BF}
+  .p-lbl{font:500 10px Inter;color:#8B97A6;letter-spacing:.14em;text-transform:uppercase;margin:4px 2px 7px}
+  .p-seg{display:flex;align-items:center;gap:2px;background:#EEF1F4;border-radius:10px;padding:3px;margin-bottom:14px}
+  .p-seg span{flex:1 1 auto;display:flex;align-items:center;justify-content:center;height:30px;padding:0 4px;font:500 10px Inter;white-space:nowrap;color:#5C6878;border-radius:8px}
+  .p-seg span.on{background:#fff;color:#0E1A2B;box-shadow:0 1px 3px rgba(14,26,43,.12)}
+  .p-out{text-align:center;font:500 13px Inter;color:#D64545;padding:6px 0}
+</style><style>
+  .t-row{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+  .t-cap{font:500 11px Inter,sans-serif;color:#7C93B0;text-align:center;margin-top:12px;text-transform:uppercase;letter-spacing:.14em;max-width:300px}
+  .t-phone{width:300px;height:640px;border-radius:50px;padding:9px;background:linear-gradient(145deg,#2a2f36,#0b0d10);box-shadow:0 0 0 1.5px #3a4048 inset,0 30px 60px -24px rgba(0,0,0,.6)}
+  .t-scr{width:100%;height:100%;border-radius:42px;overflow:hidden;position:relative;font-family:Inter,-apple-system,sans-serif;background:#F7F8FA;color:#0E1A2B}
+  .t-island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:88px;height:26px;border-radius:18px;background:#000;z-index:9}
+  .t-status{position:absolute;top:14px;left:26px;right:22px;display:flex;justify-content:space-between;font:600 12px Inter;z-index:8}
+  .t-hb{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:104px;height:4px;border-radius:2px;background:rgba(14,26,43,.35);z-index:9}
+  .t-body{position:absolute;inset:0;padding-top:48px;display:flex;flex-direction:column}
+  .t-nav{display:flex;align-items:center;gap:10px;padding:6px 16px 10px}
+  .t-back{font:400 22px Inter;color:#B07F1C;line-height:1;width:14px}
+  .t-title{font:600 17px Inter;letter-spacing:-.01em;white-space:nowrap}
+  .t-sp{flex:1}
+  .t-ic{width:30px;height:30px;border-radius:50%;background:#fff;border:1px solid #EEF0F3;display:flex;align-items:center;justify-content:center}
+  .t-ic svg{width:15px;height:15px}
+  .t-av{flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font:500 10px Inter;color:#3D4D60;background:#E6EBF1;position:relative}
+  .t-av .d{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;border:2px solid #F7F8FA}
+  .s-on{background:#2E9E5B}.reu{background:#E0A62B}.aus{background:#A9B3BF}.npt{background:#D64545}
+  .t-search{margin:0 16px 10px;height:34px;border-radius:10px;background:#EEF1F4;display:flex;align-items:center;gap:7px;padding:0 10px;font:400 12px Inter;color:#8B97A6}
+  .t-chips{display:flex;gap:5px;padding:0 16px 8px}
+  .t-chip{flex:1;text-align:center;font:500 10.5px Inter;color:#5C6878;padding:6px 0;border-radius:14px;background:#fff;border:1px solid #EEF0F3;white-space:nowrap}
+  .t-chip.sel{background:#0A1B30;color:#fff;border-color:#0A1B30}
+  .t-list{flex:1;overflow:hidden;padding:0 8px}
+  .t-it{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:12px}
+  .t-it .t-av{width:38px;height:38px;font-size:11px}
+  .t-n{font:600 13px Inter}.t-p{font:400 11.5px Inter;color:#7A8797;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:165px;margin-top:2px}
+  .t-r{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .t-h{font:400 10px Inter;color:#9AA5B2}
+  .t-b{min-width:17px;height:17px;border-radius:9px;background:#EDB449;color:#1A1204;font:600 9.5px Inter;display:flex;align-items:center;justify-content:center;padding:0 5px}
+  .t-mute{font:400 10px Inter;color:#A9B3BF}
+  .t-fab{position:absolute;right:16px;bottom:84px;width:46px;height:46px;border-radius:15px;background:#0A1B30;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px -8px rgba(10,27,48,.5)}
+  .t-tabs{position:absolute;left:0;right:0;bottom:0;height:72px;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);border-top:1px solid #EEF0F3;display:flex;justify-content:space-around;padding-top:8px}
+  .t-tab{display:flex;flex-direction:column;align-items:center;gap:3px;font:500 9.5px Inter;color:#8B97A6;position:relative}
+  .t-tab svg{width:20px;height:20px}
+  .t-tab.sel{color:#0E1A2B}
+  .t-tab .t-b{position:absolute;top:-4px;right:-8px;height:15px;min-width:15px;font-size:8.5px}
+
+  .c-head{display:flex;align-items:center;gap:9px;padding:4px 12px 10px;border-bottom:1px solid #EEF0F3;background:#fff}
+  .c-head .t-av{width:32px;height:32px}
+  .c-n{font:600 13.5px Inter;white-space:nowrap}.c-s{font:400 10.5px Inter;color:#2E9E5B}
+  .c-msgs{flex:1;padding:10px 12px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+  .c-day{align-self:center;font:500 9.5px Inter;color:#8B97A6;background:#EEF1F4;padding:3px 9px;border-radius:9px;margin:2px 0 4px}
+  .b{max-width:78%;padding:7px 10px;border-radius:14px;font:400 12px/1.4 Inter;position:relative}
+  .b.in{background:#fff;border:1px solid #EEF0F3;align-self:flex-start;border-bottom-left-radius:4px}
+  .b.out{background:#0A1B30;color:#EEF3F9;align-self:flex-end;border-bottom-right-radius:4px}
+  .b .m{display:block;text-align:right;font:400 9px Inter;opacity:.6;margin-top:2px}
+  .b .rk{color:#EDB449}
+  .q{border-left:2px solid #EDB449;padding:3px 7px;margin-bottom:5px;background:rgba(237,180,73,.10);border-radius:4px;font-size:10.5px;color:#C9D6E4}
+  .cli{display:inline-flex;align-items:center;gap:4px;background:rgba(237,180,73,.16);color:#8A6418;border-radius:6px;padding:0 5px;font-weight:500}
+  .men{color:#B07F1C;font-weight:500}
+  .att{display:flex;align-items:center;gap:8px;background:#F4F6F9;border-radius:9px;padding:7px;margin-bottom:4px}
+  .att i{width:26px;height:30px;border-radius:5px;background:#D64545;color:#fff;font:600 7px Inter;display:flex;align-items:center;justify-content:center;font-style:normal}
+  .aud{display:flex;align-items:center;gap:7px}
+  .aud .pl{width:22px;height:22px;border-radius:50%;background:#EDB449;display:flex;align-items:center;justify-content:center}
+  .wave{display:flex;align-items:center;gap:2px}.wave span{width:2px;border-radius:1px;background:rgba(238,243,249,.7)}
+  .ped{background:#fff;border:1px solid #EEF0F3;border-radius:12px;padding:9px 10px;align-self:flex-start;width:72%}
+  .ped .k{font:600 9px Inter;color:#B07F1C;letter-spacing:.1em;text-transform:uppercase}
+  .ped .tt{font:600 12px Inter;margin:3px 0}.ped .mt{font:400 10px Inter;color:#7A8797}
+  .comp{display:flex;align-items:center;gap:8px;padding:8px 10px 26px;background:#fff;border-top:1px solid #EEF0F3}
+  .plus{width:30px;height:30px;border-radius:50%;background:#F1F3F6;display:flex;align-items:center;justify-content:center;font:300 20px Inter;color:#0E1A2B}
+  .inp{flex:1;height:32px;border-radius:16px;background:#F1F3F6;display:flex;align-items:center;padding:0 12px;font:400 12px Inter;color:#8B97A6}
+  .mic{width:30px;height:30px;border-radius:50%;background:#0A1B30;display:flex;align-items:center;justify-content:center}
+
+  .dim{position:absolute;inset:0;background:rgba(14,26,43,.35)}
+  .sheet{position:absolute;left:8px;right:8px;bottom:30px;background:#fff;border-radius:20px;padding:14px 12px 10px}
+  .sh-g{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 4px}
+  .sh-i{display:flex;flex-direction:column;align-items:center;gap:5px;font:500 9.5px Inter;color:#3D4D60;text-align:center}
+  .sh-o{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+  .sh-o svg{width:20px;height:20px}
+  .sh-sep{height:1px;background:#EEF0F3;margin:12px 0 8px}
+  .ctx{display:flex;flex-direction:column}
+  .ctx div{font:400 12.5px Inter;padding:9px 6px;border-bottom:1px solid #F1F3F6;display:flex;justify-content:space-between}
+  .ctx div:last-child{border:0;color:#D64545}
+  .lock{font:500 9px Inter;color:#B07F1C}
+
+  .call{background:radial-gradient(120% 70% at 50% 10%,#1B3A5E,#061527 55%,#02080F);color:#EEF3F9}
+  .call .t-status{color:#EEF3F9}
+  .cl-av{width:96px;height:96px;border-radius:50%;margin:110px auto 14px;background:#254B74;display:flex;align-items:center;justify-content:center;font:500 28px Inter;box-shadow:0 0 0 10px rgba(237,180,73,.08),0 0 0 22px rgba(237,180,73,.04)}
+  .cl-n{text-align:center;font:500 20px Inter}.cl-s{text-align:center;font:400 12px Inter;color:#9DB0C6;margin-top:4px}
+  .pip{position:absolute;right:16px;top:56px;width:72px;height:100px;border-radius:14px;background:linear-gradient(160deg,#2a3a50,#121c2a);border:1px solid rgba(255,255,255,.15)}
+  .cl-bar{position:absolute;left:18px;right:18px;bottom:44px;display:flex;justify-content:space-between}
+  .cb{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
+  .cb svg{width:20px;height:20px}
+  .cb.end{background:#D64545}
+  .cl-l{display:flex;justify-content:space-between;position:absolute;left:18px;right:18px;bottom:24px;font:400 9px Inter;color:#9DB0C6}
+  .cl-l span{width:50px;text-align:center}
+
+  .grid2{display:grid;grid-template-columns:repeat(3,300px);gap:30px 28px;justify-content:center;margin-top:18px}
+  .sec{font:500 10px Inter;color:#8B97A6;letter-spacing:.14em;text-transform:uppercase;margin:12px 18px 6px}
+  .card{background:#fff;border:1px solid #EEF0F3;border-radius:14px;margin:0 14px 8px;padding:11px 12px}
+  .lv{display:inline-flex;align-items:center;gap:5px;font:600 9px Inter;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:6px}
+  .lv.urg{background:#FBE8E8;color:#C23B3B}.lv.vis{background:#FBF1DC;color:#A87414}.lv.inf{background:#E8EFFD;color:#2F6FED}
+  .ct{font:600 12.5px Inter;margin:6px 0 3px}.cd{font:400 11px/1.4 Inter;color:#5C6878}
+  .cf{display:flex;align-items:center;justify-content:space-between;margin-top:9px;font:400 10px Inter;color:#8B97A6}
+  .btn{font:500 11px Inter;padding:6px 12px;border-radius:9px;background:#0A1B30;color:#fff}
+  .btn.l{background:#F1F3F6;color:#0E1A2B}
+  .ok{font:500 10.5px Inter;color:#2E9E5B}
+  .seg2{display:flex;background:#EEF1F4;border-radius:10px;padding:3px;margin:0 14px 10px}
+  .seg2 span{flex:1;display:flex;align-items:center;justify-content:center;height:28px;font:500 10.5px Inter;color:#5C6878;border-radius:8px;white-space:nowrap}
+  .seg2 span.on{background:#fff;color:#0E1A2B;box-shadow:0 1px 3px rgba(14,26,43,.12)}
+  .st{font:600 9.5px Inter;padding:3px 8px;border-radius:6px}
+  .st.ab{background:#E8EFFD;color:#2F6FED}.st.an{background:#FBF1DC;color:#A87414}.st.cc{background:#E6F4EC;color:#2E9E5B}
+  .code{font:600 9.5px Inter;color:#B07F1C;letter-spacing:.06em}
+  .row{display:flex;align-items:center;gap:8px}
+  .avs{display:flex}.avs .t-av{width:22px;height:22px;font-size:8px;border:2px solid #fff;margin-left:-6px}
+  .avs .t-av:first-child{margin-left:0}
+  .tm{font:600 18px Inter;letter-spacing:-.02em}.tmd{font:400 10px Inter;color:#8B97A6}
+  .pp{display:flex;align-items:center;gap:10px;padding:8px 18px}
+  .pp .t-av{width:34px;height:34px}
+  .pn{font:500 12.5px Inter}.pr{font:400 10.5px Inter;color:#8B97A6}
+  .chk{margin-left:auto;width:20px;height:20px;border-radius:50%;border:1.5px solid #C9D1DB}
+  .chk.on2{background:#0A1B30;border-color:#0A1B30;display:flex;align-items:center;justify-content:center}
+  .sel-chips{display:flex;gap:6px;padding:0 16px 8px;flex-wrap:wrap}
+  .sel-chips span{font:500 10px Inter;padding:5px 9px;border-radius:12px;background:#fff;border:1px solid #EEF0F3;color:#5C6878}
+  .sel-chips span.on{background:#0A1B30;color:#fff;border-color:#0A1B30}
+  .tg{margin-left:auto;width:38px;height:22px;border-radius:11px;background:#2E9E5B;position:relative}
+  .tg:after{content:'';position:absolute;right:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff}
+  .tg.off{background:#D9DEE5}.tg.off:after{right:auto;left:2px}
+  .opt{display:flex;align-items:center;padding:12px 18px;border-bottom:1px solid #F1F3F6;font:400 12.5px Inter}
+  .fld{margin:0 16px 10px}.fl{font:500 10px Inter;color:#8B97A6;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+  .fi{height:38px;border-radius:10px;background:#fff;border:1px solid #E6EAEF;display:flex;align-items:center;padding:0 12px;font:400 12px Inter;color:#0E1A2B}
+  .fi.ph{color:#9AA5B2}
+  .ring{background:radial-gradient(120% 70% at 50% 10%,#1B3A5E,#061527 55%,#02080F);color:#EEF3F9}
+  .ring .t-status{color:#EEF3F9}
+  .r2{position:absolute;left:30px;right:30px;bottom:60px;display:flex;justify-content:space-between}
+  .r2 div{display:flex;flex-direction:column;align-items:center;gap:8px;font:400 11px Inter;color:#C9D6E4}
+  .bigb{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .bigb svg{width:26px;height:26px}
+</style>
+<style>.sec-h{font:600 13px Inter,sans-serif;color:#C9D6E4;letter-spacing:.12em;text-transform:uppercase;margin:34px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}</style>
+<h2>App BL CEO — todas as telas</h2>
+<p class="subtitle">Tudo junto, em ordem: entrada e perfil, TEAM's (conversas, chat, ações, chamada) e as telas que faltavam (avisos, pedidos, reuniões, nova conversa, detalhes, chamada chegando). Nomes e números são ilustração.</p>
+<div class="sec-h">A · Entrada e perfil</div>
+<div class="y-row">
+  <div>
+    <div class="y-phone"><div class="y-scr y-login">
+      <div class="y-island"></div><div class="y-status"><span>9:41</span><span>●●●</span></div>
+      <div class="y-glow"></div>
+      <img src="/files/logo-novo.png" alt="" style="position:absolute;left:50%;top:146px;transform:translateX(-50%);width:124px;filter:drop-shadow(0 8px 24px rgba(237,180,73,.25))">
+      <div class="y-form">
+        <div class="y-t">Blanco &amp; Lisboa</div>
+        <div class="y-s">Acesso exclusivo CEO</div>
+        <div class="y-in">E-mail</div>
+        <div class="y-in">Senha</div>
+        <div class="y-btn">Entrar</div>
+        <div class="y-face"><span class="y-fid"></span>Usar Face ID</div>
+      </div>
+      <div class="y-hb"></div>
+    </div></div>
+    <div class="y-cap">1 · Login</div>
+  </div>
+
+  <div>
+    <div class="y-phone"><div class="y-scr y-app">
+      <div class="y-island"></div><div class="y-status"><span>9:41</span><span>●●●</span></div>
+      <div class="y-home">
+        <div class="y-hdr">
+          <div class="y-hello" style="font-size:17px">Módulos</div>
+          <div class="y-av">WR</div>
+        </div>
+        <div style="height:18px"></div>
+        <div class="y-card">
+          <div class="y-ch">
+            <div class="y-ci"><svg viewBox="0 0 24 24" fill="none" stroke="#EDB449" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></div>
+            <div><div class="y-ct">TEAM's</div><div class="y-cs">Conversas e chamadas</div></div>
+            <div class="y-badge">3</div>
+          </div>
+          <div class="y-msg"><div class="y-ma">LL</div><div><div class="y-mt">Lucas Lisboa</div><div class="y-mp">Fechei o contrato da abertura, pode conferir?</div></div><div class="y-mh">9:32</div></div>
+        </div>
+      </div>
+      <div class="y-hb"></div>
+    </div></div>
+    <div class="y-cap">2 · Início (claro)</div>
+  </div>
+
+  <div>
+    <div class="y-phone"><div class="y-scr y-app">
+      <div class="y-island"></div><div class="y-status"><span>9:41</span><span>●●●</span></div>
+      <div style="position:absolute;inset:0;background:rgba(14,26,43,.25)"></div>
+      <div class="p-sheet">
+        <div class="p-grab"></div>
+        <div class="p-top"><span>Meu perfil</span><span class="p-ok">Salvar</span></div>
+        <div class="p-av">WR</div>
+        <div class="p-chg">Trocar foto</div>
+        <div class="p-grp">
+          <div class="p-it"><span class="p-k">Nome</span><span class="p-lock">William Ramos</span></div>
+          <div class="p-it"><span class="p-k">Nível</span><span class="p-lock">CEO</span></div>
+          <div class="p-it"><span class="p-k">E-mail</span><span class="p-v">william.ramos@…</span></div>
+          <div class="p-it"><span class="p-k">WhatsApp</span><span class="p-v">(11) 9····-····</span></div>
+        </div>
+        <div class="p-lbl">Status</div>
+        <div class="p-seg"><span class="on">Online</span><span>Reunião</span><span>Ausente</span><span>Não perturbe</span></div>
+        <div class="p-grp"><div class="p-it"><span class="p-v">Trocar senha</span><span class="p-k">›</span></div></div>
+        <div class="p-out">Sair</div>
+      </div>
+      <div class="y-hb"></div>
+    </div></div>
+    <div class="y-cap">3 · Toque na bolinha → Meu perfil</div>
+  </div>
+</div>
+
+<div class="sec-h">B · TEAM's — conversas, chat, ações, chamada</div>
+<div class="t-row">
+  <!-- 1 Lista -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="t-body">
+        <div class="t-nav"><span class="t-back">‹</span><span class="t-title">TEAM's</span><span class="t-sp"></span>
+          <span class="t-av" style="width:30px;height:30px;background:#0A1B30;color:#EDB449">WR<span class="d s-on"></span></span></div>
+        <div class="t-search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8B97A6" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Buscar conversa ou pessoa</div>
+        <div class="t-chips"><span class="t-chip sel">Entrada</span><span class="t-chip">Anteriores</span><span class="t-chip">Grupos</span><span class="t-chip">Setores</span></div>
+        <div class="t-list">
+          <div class="t-it"><span class="t-av">LL<span class="d s-on"></span></span><div><div class="t-n">Lucas Lisboa</div><div class="t-p">Fechei o contrato da abertura, pode conferir?</div></div><div class="t-r"><span class="t-h">9:32</span><span class="t-b">2</span></div></div>
+          <div class="t-it"><span class="t-av" style="background:#0A1B30;color:#EDB449;border-radius:11px">#</span><div><div class="t-n">Societário</div><div class="t-p">Paulo: guia emitida, falta assinatura</div></div><div class="t-r"><span class="t-h">9:10</span><span class="t-b">1</span></div></div>
+          <div class="t-it"><span class="t-av">JS<span class="d reu"></span></span><div><div class="t-n">João Silva</div><div class="t-p">Você: ok, vejo na reunião</div></div><div class="t-r"><span class="t-h">Ontem</span></div></div>
+          <div class="t-it"><span class="t-av" style="border-radius:11px">GF</span><div><div class="t-n">Grupo Fechamento</div><div class="t-p">Ana: 🎤 Áudio 0:42</div></div><div class="t-r"><span class="t-h">Ontem</span><span class="t-mute">silenciado</span></div></div>
+          <div class="t-it"><span class="t-av">MC<span class="d aus"></span></span><div><div class="t-n">Marina Costa</div><div class="t-p">📎 Balanço setembro.pdf</div></div><div class="t-r"><span class="t-h">Seg</span></div></div>
+        </div>
+        <div class="t-fab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EDB449" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+        <div class="t-tabs">
+          <div class="t-tab sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Conversas<span class="t-b">3</span></div>
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></svg>Avisos<span class="t-b">1</span></div>
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h4"/></svg>Pedidos</div>
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Reuniões</div>
+        </div>
+      </div>
+      <div class="t-hb"></div>
+    </div></div>
+    <div class="t-cap">1 · Conversas (o + abre nova conversa / grupo)</div>
+  </div>
+
+  <!-- 2 Chat -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="t-body">
+        <div class="c-head"><span class="t-back">‹</span><span class="t-av">LL<span class="d s-on" style="border-color:#fff"></span></span>
+          <div><div class="c-n">Lucas Lisboa</div><div class="c-s">Online · Diretor</div></div><span class="t-sp"></span>
+          <span class="t-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="1.8"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span>
+          <span class="t-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="1.8"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg></span>
+          <span class="t-ic"><svg viewBox="0 0 24 24" fill="#0E1A2B"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></span>
+        </div>
+        <div class="c-msgs">
+          <div class="c-day">Hoje</div>
+          <div class="b in">Fechei o contrato da abertura da <span class="cli">◧ Julia Xavier ME</span>, pode conferir?<span class="m">9:30</span></div>
+          <div class="b in"><div class="att"><i>PDF</i><div><div style="font:500 11px Inter">Contrato social.pdf</div><div style="font:400 9.5px Inter;color:#8B97A6">412 KB</div></div></div><span class="m">9:31</span></div>
+          <div class="b out"><div class="q">Lucas: Fechei o contrato da abertura…</div>Conferi. <span class="men" style="color:#EDB449">@Paulo</span> emite a guia hoje?<span class="m">9:34 <span class="rk">✓✓</span></span></div>
+          <div class="ped"><div class="k">Pedido · P-128</div><div class="tt">Emitir guia da abertura</div><div class="mt">Dono: Paulo · Prazo hoje 17h · Aberto</div></div>
+          <div class="b out"><div class="aud"><span class="pl"><svg width="9" height="9" viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z" fill="#1A1204"/></svg></span><span class="wave"><span style="height:6px"></span><span style="height:12px"></span><span style="height:8px"></span><span style="height:14px"></span><span style="height:5px"></span><span style="height:10px"></span><span style="height:13px"></span><span style="height:7px"></span><span style="height:11px"></span><span style="height:6px"></span></span><span style="font:400 10px Inter">0:18</span></div><span class="m">9:36 <span class="rk">✓✓</span></span></div>
+        </div>
+        <div class="comp"><span class="plus">+</span><span class="inp">Mensagem</span><span class="mic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EDB449" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span></div>
+      </div>
+      <div class="t-hb"></div>
+    </div></div>
+    <div class="t-cap">2 · Conversa (anexo, áudio, @menção, cliente, pedido, resposta)</div>
+  </div>
+
+  <!-- 3 Ações -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="dim"></div>
+      <div class="sheet">
+        <div class="sh-g">
+          <div class="sh-i"><span class="sh-o" style="background:#E8EFFD"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6FED" stroke-width="1.8"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></span>Documento</div>
+          <div class="sh-i"><span class="sh-o" style="background:#E6F4EC"><svg viewBox="0 0 24 24" fill="none" stroke="#2E9E5B" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></span>Fotos</div>
+          <div class="sh-i"><span class="sh-o" style="background:#F1F3F6"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="1.8"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>Câmera</div>
+          <div class="sh-i"><span class="sh-o" style="background:#FBF1DC"><svg viewBox="0 0 24 24" fill="none" stroke="#B07F1C" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Cliente</div>
+          <div class="sh-i"><span class="sh-o" style="background:#FBF1DC"><svg viewBox="0 0 24 24" fill="none" stroke="#B07F1C" stroke-width="1.8"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h4"/></svg></span>Pedido</div>
+          <div class="sh-i"><span class="sh-o" style="background:#FBE8E8"><svg viewBox="0 0 24 24" fill="none" stroke="#D64545" stroke-width="1.8"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></svg></span>Aviso</div>
+          <div class="sh-i"><span class="sh-o" style="background:#E8EFFD"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6FED" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>Reunião</div>
+          <div class="sh-i"><span class="sh-o" style="background:#0A1B30"><svg viewBox="0 0 24 24" fill="none" stroke="#EDB449" stroke-width="1.8"><path d="M4 21h16M6 21V10l6-6 6 6v11M10 21v-6h4v6"/></svg></span>Decisão CEO</div>
+        </div>
+        <div class="sh-sep"></div>
+        <div class="ctx">
+          <div><span>Responder</span><span>↩</span></div>
+          <div><span>Copiar</span><span>⧉</span></div>
+          <div><span>Criar pedido desta mensagem</span><span>▤</span></div>
+          <div><span>Editar</span><span>✎</span></div>
+          <div><span>Apagar para todos</span><span>⌫</span></div>
+        </div>
+      </div>
+      <div class="t-hb" style="background:rgba(255,255,255,.6)"></div>
+    </div></div>
+    <div class="t-cap">3 · Botão + (anexar e criar) e toque longo na mensagem</div>
+  </div>
+
+  <!-- 4 Chamada -->
+  <div>
+    <div class="t-phone"><div class="t-scr call">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="pip"></div>
+      <div class="cl-av">LL</div>
+      <div class="cl-n">Lucas Lisboa</div>
+      <div class="cl-s">Vídeo · 04:12</div>
+      <div class="cl-bar">
+        <span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18"/></svg></span>
+        <span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg></span>
+        <span class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M9 10l3-3 3 3M12 7v6"/></svg></span>
+        <span class="cb end"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 15c5-5 13-5 18 0l-2 3-4-2v-2a10 10 0 0 0-6 0v2l-4 2z"/></svg></span>
+      </div>
+      <div class="cl-l"><span>Mudo</span><span>Câmera</span><span>Tela</span><span>Encerrar</span></div>
+      <div class="t-hb" style="background:rgba(255,255,255,.5)"></div>
+    </div></div>
+    <div class="t-cap">4 · Chamada de voz / vídeo</div>
+  </div>
+</div>
+
+<div class="sec-h">C · TEAM's — avisos, pedidos, reuniões, nova conversa, detalhes</div>
+<div class="t-row">
+  <!-- Avisos -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="t-body">
+        <div class="t-nav"><span class="t-title">Avisos</span><span class="t-sp"></span><span class="t-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></div>
+        <div class="seg2"><span class="on">Todos</span><span>Central</span><span>Meu setor</span></div>
+        <div class="card"><span class="lv urg">● Urgente do CEO</span><div class="ct">Fechamento de outubro antecipado</div><div class="cd">Todos os setores entregam até dia 25.</div><div class="cf"><span>William · 9:02 · 8 de 14 viram</span><span class="btn">Dar visto</span></div></div>
+        <div class="card"><span class="lv vis">● Exige visto</span><div class="ct">Novo procedimento de abertura</div><div class="cd">Checklist atualizado no Workspace.</div><div class="cf"><span>Lucas · ontem</span><span class="ok">✓ Você deu visto</span></div></div>
+        <div class="card"><span class="lv inf">● Informativo</span><div class="ct">Manutenção do ERP hoje 22h</div><div class="cd">Sistema fica fora por 30 min.</div><div class="cf"><span>Suporte · seg</span></div></div>
+        <div class="t-tabs">
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Conversas</div>
+          <div class="t-tab sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></svg>Avisos</div>
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h4"/></svg>Pedidos</div>
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Reuniões</div>
+        </div>
+      </div><div class="t-hb"></div>
+    </div></div>
+    <div class="t-cap">5 · Avisos (nível, dar visto, quem viu)</div>
+  </div>
+
+  <!-- Novo aviso -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="t-body">
+        <div class="t-nav"><span class="t-back" style="font-size:13px;width:auto">Cancelar</span><span class="t-sp"></span><span class="t-title" style="font-size:14px">Novo aviso</span><span class="t-sp"></span><span style="font:600 13px Inter;color:#B07F1C">Enviar</span></div>
+        <div class="fld"><div class="fl">Nível</div><div class="seg2" style="margin:0"><span>Informativo</span><span>Exige visto</span><span class="on">Urgente</span></div></div>
+        <div class="fld"><div class="fl">Para</div><div class="seg2" style="margin:0"><span class="on">Todos</span><span>Um setor</span></div></div>
+        <div class="fld"><div class="fl">Título</div><div class="fi">Fechamento de outubro antecipado</div></div>
+        <div class="fld"><div class="fl">Mensagem</div><div class="fi" style="height:110px;align-items:flex-start;padding-top:10px">Todos os setores entregam até dia 25.</div></div>
+      </div><div class="t-hb"></div>
+    </div></div>
+    <div class="t-cap">6 · Novo aviso</div>
+  </div>
+
+  <!-- Pedidos -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="t-body">
+        <div class="t-nav"><span class="t-title">Pedidos</span><span class="t-sp"></span><span class="t-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></div>
+        <div class="seg2"><span class="on">Para mim</span><span>Que eu pedi</span><span>Todos</span></div>
+        <div class="card"><div class="row"><span class="code">P-128</span><span class="t-sp"></span><span class="st ab">Aberto</span></div><div class="ct">Emitir guia da abertura</div><div class="cf"><span>De Lucas · prazo hoje 17h</span><span class="btn l">Mudar status</span></div></div>
+        <div class="card"><div class="row"><span class="code">P-121</span><span class="t-sp"></span><span class="st an">Em andamento</span></div><div class="ct">Conferir faturamento Shopee × ML</div><div class="cf"><span>De Marina · sex</span><span class="btn l">Mudar status</span></div></div>
+        <div class="card"><div class="row"><span class="code">P-117</span><span class="t-sp"></span><span class="st cc">Concluído</span></div><div class="ct">Assinar contrato Julia Xavier</div><div class="cf"><span>De Paulo · ontem</span><span>↗ conversa</span></div></div>
+        <div class="t-tabs">
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Conversas</div>
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></svg>Avisos</div>
+          <div class="t-tab sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h4"/></svg>Pedidos</div>
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Reuniões</div>
+        </div>
+      </div><div class="t-hb"></div>
+    </div></div>
+    <div class="t-cap">7 · Pedidos (filtros e status)</div>
+  </div>
+
+  <!-- Novo pedido -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="t-body">
+        <div class="t-nav"><span class="t-back" style="font-size:13px;width:auto">Cancelar</span><span class="t-sp"></span><span class="t-title" style="font-size:14px">Novo pedido</span><span class="t-sp"></span><span style="font:600 13px Inter;color:#B07F1C">Criar</span></div>
+        <div class="fld"><div class="fl">O que fazer</div><div class="fi">Emitir guia da abertura</div></div>
+        <div class="fld"><div class="fl">Descrição</div><div class="fi" style="height:70px;align-items:flex-start;padding-top:10px">Cliente Julia Xavier ME, guia de taxa da junta.</div></div>
+        <div class="fld"><div class="fl">Dono</div><div class="fi"><span class="t-av" style="width:22px;height:22px;font-size:8px;margin-right:8px">PA</span>Paulo Andrade</div></div>
+        <div class="fld"><div class="fl">Prazo</div><div class="fi">Hoje, 17:00</div></div>
+        <div class="fld"><div class="fl">Ligado à conversa</div><div class="fi ph">Lucas Lisboa · mensagem das 9:30</div></div>
+      </div><div class="t-hb"></div>
+    </div></div>
+    <div class="t-cap">8 · Novo pedido (também a partir de uma mensagem)</div>
+  </div>
+
+  <!-- Reuniões -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="t-body">
+        <div class="t-nav"><span class="t-title">Reuniões</span><span class="t-sp"></span><span class="t-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></div>
+        <div class="sec">Hoje</div>
+        <div class="card"><div class="row"><div><div class="tm">14:00</div><div class="tmd">até 14:45</div></div><div style="margin-left:12px;flex:1"><div class="ct" style="margin:0 0 3px">Semanal Financeiro × Societário</div><div class="avs"><span class="t-av">WR</span><span class="t-av">LL</span><span class="t-av">MC</span><span class="t-av">+2</span></div></div></div><div class="cf"><span class="ok">✓ Confirmado</span><span class="btn">Entrar</span></div></div>
+        <div class="sec">Amanhã</div>
+        <div class="card"><div class="row"><div><div class="tm">10:30</div><div class="tmd">até 11:00</div></div><div style="margin-left:12px;flex:1"><div class="ct" style="margin:0 0 3px">Alinhamento abertura Julia Xavier</div><div class="avs"><span class="t-av">LL</span><span class="t-av">PA</span></div></div></div><div class="cf"><span>Convite de Lucas</span><span class="btn l">Confirmar</span></div></div>
+        <div class="t-tabs">
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Conversas</div>
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></svg>Avisos</div>
+          <div class="t-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h4"/></svg>Pedidos</div>
+          <div class="t-tab sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Reuniões</div>
+        </div>
+      </div><div class="t-hb"></div>
+    </div></div>
+    <div class="t-cap">9 · Reuniões (confirmar e entrar)</div>
+  </div>
+
+  <!-- Marcar reunião -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="t-body">
+        <div class="t-nav"><span class="t-back" style="font-size:13px;width:auto">Cancelar</span><span class="t-sp"></span><span class="t-title" style="font-size:14px">Marcar reunião</span><span class="t-sp"></span><span style="font:600 13px Inter;color:#B07F1C">Marcar</span></div>
+        <div class="fld"><div class="fl">Assunto</div><div class="fi">Alinhamento abertura Julia Xavier</div></div>
+        <div class="fld"><div class="fl">Pauta</div><div class="fi" style="height:60px;align-items:flex-start;padding-top:10px">Documentos pendentes e prazo da junta.</div></div>
+        <div class="fld" style="display:flex;gap:8px"><div style="flex:1"><div class="fl">Início</div><div class="fi">Amanhã 10:30</div></div><div style="flex:1"><div class="fl">Fim</div><div class="fi">11:00</div></div></div>
+        <div class="fld"><div class="fl">Convidados</div><div class="fi"><div class="avs"><span class="t-av">LL</span><span class="t-av">PA</span></div><span style="margin-left:8px;color:#B07F1C;font-weight:500">+ adicionar</span></div></div>
+      </div><div class="t-hb"></div>
+    </div></div>
+    <div class="t-cap">10 · Marcar reunião</div>
+  </div>
+
+  <!-- Nova conversa -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="t-body">
+        <div class="t-nav"><span class="t-back" style="font-size:13px;width:auto">Cancelar</span><span class="t-sp"></span><span class="t-title" style="font-size:14px">Nova conversa</span><span class="t-sp"></span><span style="font:600 13px Inter;color:#B07F1C">Grupo</span></div>
+        <div class="t-search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8B97A6" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Buscar pessoa</div>
+        <div class="sel-chips"><span class="on">Todos</span><span>Societário</span><span>Fiscal</span><span>Financeiro</span><span>Diretor</span><span>Gerente</span></div>
+        <div class="pp"><span class="t-av">LL<span class="d s-on"></span></span><div><div class="pn">Lucas Lisboa</div><div class="pr">Diretor · Societário</div></div><span class="chk on2"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5 9-10"/></svg></span></div>
+        <div class="pp"><span class="t-av">PA<span class="d s-on"></span></span><div><div class="pn">Paulo Andrade</div><div class="pr">Assistente · Societário</div></div><span class="chk on2"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5 9-10"/></svg></span></div>
+        <div class="pp"><span class="t-av">MC<span class="d aus"></span></span><div><div class="pn">Marina Costa</div><div class="pr">Gerente · Financeiro</div></div><span class="chk"></span></div>
+        <div class="pp"><span class="t-av">JS<span class="d reu"></span></span><div><div class="pn">João Silva</div><div class="pr">Colaborador · Fiscal</div></div><span class="chk"></span></div>
+      </div><div class="t-hb"></div>
+    </div></div>
+    <div class="t-cap">11 · Nova conversa / grupo (filtro por setor e nível)</div>
+  </div>
+
+  <!-- Participantes -->
+  <div>
+    <div class="t-phone"><div class="t-scr">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="t-body">
+        <div class="t-nav"><span class="t-back">‹</span><span class="t-title" style="font-size:14px">Grupo Fechamento</span></div>
+        <div class="opt">Silenciar conversa<span class="tg"></span></div>
+        <div class="opt">Buscar nesta conversa<span style="margin-left:auto;color:#A9B3BF">›</span></div>
+        <div class="opt">Arquivos e fotos<span style="margin-left:auto;color:#A9B3BF">23 ›</span></div>
+        <div class="sec">Participantes · 5</div>
+        <div class="pp"><span class="t-av">WR<span class="d s-on"></span></span><div><div class="pn">William Ramos (você)</div><div class="pr">Online</div></div></div>
+        <div class="pp"><span class="t-av">AN<span class="d reu"></span></span><div><div class="pn">Ana Nogueira</div><div class="pr">Em reunião</div></div></div>
+        <div class="pp"><span class="t-av">MC<span class="d aus"></span></span><div><div class="pn">Marina Costa</div><div class="pr">Ausente</div></div></div>
+        <div class="opt" style="color:#B07F1C;border:0">+ Adicionar pessoas</div>
+      </div><div class="t-hb"></div>
+    </div></div>
+    <div class="t-cap">12 · Detalhes da conversa (silenciar, participantes)</div>
+  </div>
+
+  <!-- Chamada chegando -->
+  <div>
+    <div class="t-phone"><div class="t-scr ring">
+      <div class="t-island"></div><div class="t-status"><span>9:41</span><span>●●●</span></div>
+      <div class="cl-av">LL</div>
+      <div class="cl-n">Lucas Lisboa</div>
+      <div class="cl-s">TEAM's · chamada de vídeo</div>
+      <div class="r2">
+        <div><span class="bigb" style="background:#D64545"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 15c5-5 13-5 18 0l-2 3-4-2v-2a10 10 0 0 0-6 0v2l-4 2z"/></svg></span>Recusar</div>
+        <div><span class="bigb" style="background:#2E9E5B"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg></span>Atender</div>
+      </div>
+      <div class="t-hb" style="background:rgba(255,255,255,.5)"></div>
+    </div></div>
+    <div class="t-cap">13 · Chamada chegando</div>
+  </div>
+</div>
