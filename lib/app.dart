@@ -7,6 +7,7 @@ import 'data/teams/teams_api.dart';
 import 'features/inicio/tela_inicio.dart';
 import 'features/login/tela_login.dart';
 import 'features/teams/chamada.dart';
+import 'features/teams/sons.dart';
 import 'features/teams/teams_store.dart';
 
 class AppBl extends StatefulWidget {
@@ -63,7 +64,10 @@ class _AppBlState extends State<AppBl> {
       title: 'BL CEO',
       debugShowCheckedModeBanner: false,
       theme: temaClaro(),
-      builder: (context, filho) => AreaSegura(child: chamada == null ? filho! : CamadaChamada(controle: chamada!, child: filho!)),
+      builder: (context, filho) => Listener(
+        onPointerDown: (_) => Sons.i.destravar(),
+        child: AreaSegura(child: chamada == null ? filho! : CamadaChamada(controle: chamada!, child: filho!)),
+      ),
       home: ListenableBuilder(
         listenable: widget.sessao,
         builder: (_, _) => switch (widget.sessao.estado) {

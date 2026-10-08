@@ -4,6 +4,7 @@ import 'package:livekit_client/livekit_client.dart' as lk;
 import '../../core/tema.dart';
 import '../../data/teams/modelos.dart';
 import 'comuns.dart';
+import 'sons.dart';
 import 'teams_store.dart';
 
 enum EstadoChamada { nenhuma, chamando, tocando, conectando, ativa }
@@ -32,6 +33,16 @@ class ChamadaController extends ChangeNotifier {
   String? aviso;
 
   void iniciar() => store.api.ouvirSinais(_sinal);
+
+  @override
+  void notifyListeners() {
+    if (estado == EstadoChamada.tocando || estado == EstadoChamada.chamando) {
+      Sons.i.tocarChamada();
+    } else {
+      Sons.i.pararChamada();
+    }
+    super.notifyListeners();
+  }
 
   Duration get duracao => inicio == null ? Duration.zero : DateTime.now().difference(inicio!);
 

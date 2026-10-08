@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'sons.dart';
 import '../../data/teams/modelos.dart';
 import '../../data/teams/teams_api.dart';
 
@@ -52,6 +53,7 @@ class TeamsStore extends ChangeNotifier {
         case 'chat_mensagem':
         case 'chat_anexo':
         case 'chat_recibo':
+          final antes = naoLidasTotal;
           canais = await api.canais();
           final c = canalAberto;
           if (c != null) {
@@ -60,6 +62,7 @@ class TeamsStore extends ChangeNotifier {
             canais.where((x) => x.id == c).forEach((x) => x.naoLidas = 0);
             await _resolverEmpresas(mensagens[c]!);
           }
+          if (t == 'chat_mensagem' && naoLidasTotal > antes) Sons.i.mensagem();
         case 'chat_canal':
         case 'chat_canal_membro':
           canais = await api.canais();
