@@ -4,13 +4,34 @@ import 'package:mobile_bl/data/auth_repo.dart';
 
 class RepoFalso implements AuthRepo {
   RepoFalso({this.nivel = 'ceo', this.senhaOk = true, this.teamsOk = true});
-  final String nivel; final bool senhaOk; final bool teamsOk;
-  bool saiu = false; bool logado = false;
-  @override bool get temSessaoBl => logado;
-  @override Future<void> entrarBl(String e, String s) async { if (!senhaOk) throw const ErroLogin(); logado = true; }
-  @override Future<Map<String, dynamic>?> lerPerfil() async => {'nome': 'William Ramos', 'nivel': nivel};
-  @override Future<void> entrarTeams() async { if (!teamsOk) throw Exception('x'); }
-  @override Future<void> sair() async { saiu = true; logado = false; }
+  final String nivel;
+  final bool senhaOk;
+  final bool teamsOk;
+  bool saiu = false;
+  bool logado = false;
+  @override
+  bool get temSessaoBl => logado;
+  @override
+  Future<void> entrarBl(String e, String s) async {
+    if (!senhaOk) throw const ErroLogin();
+    logado = true;
+  }
+
+  @override
+  Future<Map<String, dynamic>?> lerPerfil() async => {
+    'nome': 'William Ramos',
+    'nivel': nivel,
+  };
+  @override
+  Future<void> entrarTeams() async {
+    if (!teamsOk) throw Exception('x');
+  }
+
+  @override
+  Future<void> sair() async {
+    saiu = true;
+    logado = false;
+  }
 }
 
 void main() {

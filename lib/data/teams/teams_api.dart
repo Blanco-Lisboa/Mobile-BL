@@ -89,6 +89,8 @@ abstract class TeamsApi {
   Future<Map<String, String>?> passeLigacao(String canal);
   Future<List<Empresa>> buscarEmpresas(String texto);
   Future<Map<String, Empresa>> empresas(List<String> ids);
+  Future<String?> chavePush();
+  Future<void> salvarInscricao(Map<String, dynamic> sub, List<String> setores);
 }
 
 class TeamsApiSupabase implements TeamsApi {
@@ -656,5 +658,32 @@ class TeamsApiSupabase implements TeamsApi {
       'empresa?select=id,razao_social,nome_fantasia,cnpj,regime_tributario&id=in.(${ids.toSet().join(',')})',
     );
     return {for (final e in r) (e as Map)['id'] as String: Empresa.deMapa(e)};
+  }
+
+  @override
+  Future<String?> chavePush() async {
+    final r = await http.get(
+      Uri.parse('${Bancos.teamsUrl}/functions/v1/teams-push'),
+      headers: {'apikey': Bancos.teamsChave},
+    );
+    if (r.statusCode != 200) return null;
+    return (jsonDecode(r.body) as Map)['publica'] as String?;
+  }
+
+  @override
+  Future<void> salvarInscricao(
+    Map<String, dynamic> sub,
+    List<String> setores,
+  ) async {
+    final chaves = Map<String, dynamic>.from((sub['keys'] as Map?) ?? const {});
+    await tm.from('chat_push_inscricao').upsert({
+      'usuario_id': meuId,
+      'plataforma': 'web',
+      'endpoint': sub['endpoint'],
+      'p256dh': chaves['p256dh'],
+      'auth': chaves['auth'],
+      'setores': setores,
+      'atualizado_em': DateTime.now().toUtc().toIso8601String(),
+    }, onConflict: 'endpoint');
   }
 }

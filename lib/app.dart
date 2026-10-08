@@ -8,7 +8,9 @@ import 'data/teams/teams_api.dart';
 import 'features/inicio/tela_inicio.dart';
 import 'features/login/tela_login.dart';
 import 'features/teams/chamada.dart';
+import 'core/push/push.dart';
 import 'features/teams/sons.dart';
+import 'features/teams/tela_teams.dart';
 import 'features/teams/teams_store.dart';
 
 class AppBl extends StatefulWidget {
@@ -28,12 +30,45 @@ class AppBl extends StatefulWidget {
 class _AppBlState extends State<AppBl> {
   TeamsStore? store;
   ChamadaController? chamada;
+  final _nav = GlobalKey<NavigatorState>();
+  Uri? _destino = Uri.base.queryParameters.isEmpty ? null : Uri.base;
+
+  void _irPara(Uri u) {
+    final s = store;
+    final c = chamada;
+    final canal = u.queryParameters['canal'];
+    final abaTxt = u.queryParameters['aba'];
+    if (canal == null && abaTxt == null) return;
+    if (s == null || c == null || !s.pronto) {
+      _destino = u;
+      return;
+    }
+    _destino = null;
+    final aba = switch (abaTxt) {
+      'avisos' => 1,
+      'pedidos' => 2,
+      'reunioes' => 3,
+      _ => 0,
+    };
+    _nav.currentState?.popUntil((r) => r.isFirst);
+    _nav.currentState?.push(
+      MaterialPageRoute(
+        builder: (_) => TelaTeams(
+          store: s,
+          chamada: c,
+          abaInicial: aba,
+          canalInicial: canal,
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     widget.sessao.addListener(_sessaoMudou);
     _sessaoMudou();
+    Push.aoAbrir((url) => _irPara(Uri.parse(url)));
   }
 
   @override
@@ -51,7 +86,14 @@ class _AppBlState extends State<AppBl> {
         store = s;
         chamada = c;
       });
-      s.iniciar().then((_) => c.iniciar()).catchError((_) {});
+      s
+          .iniciar()
+          .then((_) {
+            c.iniciar();
+            final d = _destino;
+            if (d != null) _irPara(d);
+          })
+          .catchError((_) {});
     } else if (!dentro && store != null) {
       final s = store!;
       final c = chamada!;
@@ -68,10 +110,14 @@ class _AppBlState extends State<AppBl> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'BL CEO',
+      navigatorKey: _nav,
       debugShowCheckedModeBanner: false,
       theme: temaClaro(),
       builder: (context, filho) => Listener(
-        onPointerDown: (_) => Sons.i.destravar(),
+        onPointerDown: (_) {
+          Sons.i.destravar();
+          store?.ativarAvisos();
+        },
         child: AreaSegura(
           child: chamada == null
               ? filho!

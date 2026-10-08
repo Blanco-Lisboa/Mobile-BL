@@ -45,6 +45,35 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
+  <script>
+    window.blPush = (function () {
+      var reg = null;
+      var pronto = ('serviceWorker' in navigator) ? navigator.serviceWorker.register('sw-push.js', { scope: './' }).then(function (r) { reg = r; return r; }).catch(function () { return null; }) : Promise.resolve(null);
+      function b64(s) { var p = '='.repeat((4 - s.length % 4) % 4); var b = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); var a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
+      return {
+        suportado: function () { return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; },
+        permissao: function () { return ('Notification' in window) ? Notification.permission : 'denied'; },
+        pedir: function () { return ('Notification' in window) ? Notification.requestPermission() : Promise.resolve('denied'); },
+        inscrever: function (chave) {
+          return pronto.then(function (r) {
+            if (!r) return '';
+            return navigator.serviceWorker.ready.then(function (rr) {
+              return rr.pushManager.getSubscription().then(function (s) {
+                return s || rr.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(chave) });
+              });
+            }).then(function (s) { return s ? JSON.stringify(s.toJSON()) : ''; });
+          }).catch(function () { return ''; });
+        },
+        avisarSw: function (msg) {
+          return pronto.then(function () {
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage(msg);
+            else if (reg && reg.active) reg.active.postMessage(msg);
+          });
+        },
+        aoAbrir: function (f) { if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', function (e) { if (e.data && e.data.blAbrir) f(e.data.blAbrir); }); }
+      };
+    })();
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

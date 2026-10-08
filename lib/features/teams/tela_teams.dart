@@ -12,15 +12,47 @@ import 'tela_nova_conversa.dart';
 import 'teams_store.dart';
 
 class TelaTeams extends StatefulWidget {
-  const TelaTeams({super.key, required this.store, required this.chamada});
+  const TelaTeams({
+    super.key,
+    required this.store,
+    required this.chamada,
+    this.abaInicial = 0,
+    this.canalInicial,
+  });
   final TeamsStore store;
   final ChamadaController chamada;
+  final int abaInicial;
+  final String? canalInicial;
   @override
   State<TelaTeams> createState() => _TelaTeamsState();
 }
 
 class _TelaTeamsState extends State<TelaTeams> {
-  int aba = 0;
+  late int aba = widget.abaInicial;
+
+  @override
+  void initState() {
+    super.initState();
+    if (aba == 1) widget.store.carregarAvisos();
+    if (aba == 2) widget.store.carregarPedidos();
+    if (aba == 3) widget.store.carregarReunioes();
+    final c = widget.canalInicial;
+    if (c != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => TelaConversa(
+              store: widget.store,
+              canalId: c,
+              chamada: widget.chamada,
+            ),
+          ),
+        );
+        widget.store.fecharCanal();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

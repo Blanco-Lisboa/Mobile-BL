@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import '../../core/push/push.dart';
 import 'sons.dart';
 import '../../data/teams/modelos.dart';
 import '../../data/teams/teams_api.dart';
@@ -43,6 +44,8 @@ class TeamsStore extends ChangeNotifier {
     pronto = true;
     notifyListeners();
     _sub = api.mudancas().listen(_mudou);
+    if (Push.permissao == 'granted') unawaited(registrarAvisos());
+    Push.contador(naoLidasTotal);
   }
 
   void _mudou(String tabela) {
@@ -85,6 +88,7 @@ class TeamsStore extends ChangeNotifier {
           await _carregarPend();
           await carregarReunioes();
       }
+      Push.contador(naoLidasTotal);
       notifyListeners();
     } catch (_) {}
   }
@@ -93,6 +97,32 @@ class TeamsStore extends ChangeNotifier {
     try {
       pend = await api.pendencias(meusSetores);
     } catch (_) {}
+  }
+
+  bool _registrando = false;
+
+  Future<void> ativarAvisos() async {
+    if (!Push.suportado || _registrando) return;
+    if (Push.permissao == 'default') {
+      final r = await Push.pedir();
+      if (r != 'granted') return;
+    }
+    if (Push.permissao == 'granted') await registrarAvisos();
+  }
+
+  Future<void> registrarAvisos() async {
+    if (_registrando) return;
+    _registrando = true;
+    try {
+      final chave = await api.chavePush();
+      if (chave == null) return;
+      final sub = await Push.inscrever(chave);
+      if (sub == null) return;
+      await api.salvarInscricao(sub, meusSetores);
+    } catch (_) {
+    } finally {
+      _registrando = false;
+    }
   }
 
   Canal? canal(String id) {
@@ -132,6 +162,7 @@ class TeamsStore extends ChangeNotifier {
 
   Future<void> abrirCanal(String id) async {
     canalAberto = id;
+    Push.fecharTag('canal-$id');
     final c = canal(id);
     if (c != null) c.naoLidas = 0;
     notifyListeners();
@@ -139,6 +170,7 @@ class TeamsStore extends ChangeNotifier {
     await _resolverEmpresas(mensagens[id]!);
     notifyListeners();
     await api.marcarLido(id);
+    Push.contador(naoLidasTotal);
   }
 
   void fecharCanal() => canalAberto = null;
